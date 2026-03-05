@@ -92,16 +92,14 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
   const blurEffect = settings.blur_effect;
   const setBlurEffect = (v: any) => updateSetting('blur_effect', v);
 
-  const [uploadingLogo, setUploadingLogo] = useState(false);
-  const [uploadingBg, setUploadingBg] = useState(false);
+  const [uploadingField, setUploadingField] = useState<'logo' | 'background' | 'card_bg' | null>(null);
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'background') => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'background' | 'card_bg') => {
     try {
       const file = event.target.files?.[0];
       if (!file) return;
 
-      if (type === 'logo') setUploadingLogo(true);
-      else setUploadingBg(true);
+      setUploadingField(type);
 
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
@@ -120,6 +118,8 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
       if (type === 'logo') {
         setLogoUrl(data.publicUrl);
         setShowLogo(true);
+      } else if (type === 'card_bg') {
+        setCardBackgroundImage(data.publicUrl);
       } else {
         setBackgroundImage(data.publicUrl);
         setBackgroundType("image");
@@ -128,8 +128,7 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
       console.error('Error uploading image:', error);
       alert('Erro ao fazer upload da imagem. Certifique-se de que o SQL do Bucket "portal_assets" foi executado corretamente no Supabase.');
     } finally {
-      if (type === 'logo') setUploadingLogo(false);
-      else setUploadingBg(false);
+      setUploadingField(null);
     }
   };
 
@@ -301,10 +300,10 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                             accept="image/*"
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                             onChange={(e) => handleImageUpload(e, 'background')}
-                            disabled={uploadingBg}
+                            disabled={uploadingField === 'background'}
                           />
-                          <Button variant="outline" size="icon" disabled={uploadingBg}>
-                            {uploadingBg ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                          <Button variant="outline" size="icon" disabled={uploadingField === 'background'}>
+                            {uploadingField === 'background' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
                           </Button>
                         </div>
                       </div>
@@ -373,6 +372,29 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                         onChange={(e) => setCardBackgroundColor(e.target.value)}
                         className="text-xs"
                       />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-xs">Imagem de Fundo do Card</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="https://..."
+                        value={cardBackgroundImage}
+                        onChange={(e) => setCardBackgroundImage(e.target.value)}
+                        className="text-xs"
+                      />
+                      <div className="relative">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          onChange={(e) => handleImageUpload(e, 'card_bg')}
+                        />
+                        <Button variant="outline" size="icon" disabled={uploadingField === 'card_bg'}>
+                          {uploadingField === 'card_bg' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                        </Button>
+                      </div>
                     </div>
                   </div>
 
@@ -448,10 +470,10 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                               accept="image/*"
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                               onChange={(e) => handleImageUpload(e, 'logo')}
-                              disabled={uploadingLogo}
+                              disabled={uploadingField === 'logo'}
                             />
-                            <Button variant="outline" size="icon" disabled={uploadingLogo}>
-                              {uploadingLogo ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                            <Button variant="outline" size="icon" disabled={uploadingField === 'logo'}>
+                              {uploadingField === 'logo' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
                             </Button>
                           </div>
                         </div>
