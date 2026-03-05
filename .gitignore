@@ -1,0 +1,22 @@
+# node_modules
+node_modules
+dist
+build
+.vercel
+*.log
+
+# .env
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# IDE
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
