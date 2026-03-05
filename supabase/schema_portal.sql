@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS public.portal_settings (
     card_width INTEGER DEFAULT 448,
     show_logo BOOLEAN DEFAULT true,
     logo_url TEXT DEFAULT '',
+    logo_size INTEGER DEFAULT 80,
     show_title BOOLEAN DEFAULT true,
     title_text TEXT DEFAULT 'Conecte-se ao WiFi Grátis',
     show_subtitle BOOLEAN DEFAULT true,

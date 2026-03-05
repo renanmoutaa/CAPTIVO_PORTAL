@@ -162,7 +162,8 @@ export function GuestPortal() {
                     borderRadius: `${settings?.border_radius || 16}px`,
                     opacity: (settings?.opacity || 100) / 100,
                     boxShadow: settings?.card_shadow ? "0 25px 50px -12px rgba(0, 0, 0, 0.25)" : "none",
-                    maxWidth: `${settings?.card_width || 448}px`
+                    maxWidth: `${settings?.card_width || 448}px`,
+                    minHeight: settings?.card_min_height && settings.card_min_height > 0 ? `${settings.card_min_height}px` : 'auto'
                 }}
             >
                 <CardContent className="space-y-4 text-center mt-6">
@@ -170,21 +171,25 @@ export function GuestPortal() {
                         <div className="mb-6 text-center">
                             {settings.logo_url ? (
                                 <div
-                                    className="w-20 h-20 mx-auto bg-cover bg-center"
+                                    className="mx-auto bg-cover bg-center"
                                     style={{
+                                        width: `${settings.logo_size || 80}px`,
+                                        height: `${settings.logo_size || 80}px`,
                                         borderRadius: `${settings.border_radius / 1.5}px`,
                                         backgroundImage: `url(${settings.logo_url})`
                                     }}
                                 />
                             ) : (
                                 <div
-                                    className="w-20 h-20 mx-auto flex items-center justify-center"
+                                    className="mx-auto flex items-center justify-center"
                                     style={{
+                                        width: `${settings.logo_size || 80}px`,
+                                        height: `${settings.logo_size || 80}px`,
                                         backgroundColor: settings.primary_color,
                                         borderRadius: `${settings.border_radius / 1.5}px`
                                     }}
                                 >
-                                    <Wifi className="h-10 w-10 text-white" />
+                                    <Wifi className="text-white" style={{ width: `${(settings.logo_size || 80) / 2}px`, height: `${(settings.logo_size || 80) / 2}px` }} />
                                 </div>
                             )}
                         </div>

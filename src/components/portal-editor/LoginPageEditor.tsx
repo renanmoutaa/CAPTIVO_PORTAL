@@ -89,6 +89,10 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
   const setCardBackgroundImage = (v: any) => updateSetting('card_background_image', v);
   const cardWidth = settings.card_width;
   const setCardWidth = (v: number[]) => updateSetting('card_width', v[0]);
+  const cardMinHeight = settings.card_min_height || 0;
+  const setCardMinHeight = (v: number[]) => updateSetting('card_min_height', v[0]);
+  const logoSize = settings.logo_size || 80;
+  const setLogoSize = (v: number[]) => updateSetting('logo_size', v[0]);
   const blurEffect = settings.blur_effect;
   const setBlurEffect = (v: any) => updateSetting('blur_effect', v);
 
@@ -414,6 +418,20 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
 
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
+                      <Label className="text-xs">Altura Mínima do Card</Label>
+                      <span className="text-xs text-slate-600">{cardMinHeight}px</span>
+                    </div>
+                    <Slider
+                      value={[cardMinHeight]}
+                      onValueChange={setCardMinHeight}
+                      min={0}
+                      max={1000}
+                      step={10}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
                       <Label className="text-xs">Bordas Arredondadas</Label>
                       <span className="text-xs text-slate-600">{borderRadius}px</span>
                     </div>
@@ -571,21 +589,25 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                     <div className="mb-6 text-center">
                       {logoUrl ? (
                         <div
-                          className="w-20 h-20 bg-slate-200 rounded-xl mx-auto bg-cover bg-center"
+                          className="bg-slate-200 rounded-xl mx-auto bg-cover bg-center"
                           style={{
+                            width: `${logoSize}px`,
+                            height: `${logoSize}px`,
                             borderRadius: `${borderRadius / 1.5}px`,
                             backgroundImage: logoUrl ? `url(${logoUrl})` : "none"
                           }}
                         />
                       ) : (
                         <div
-                          className="w-20 h-20 mx-auto flex items-center justify-center"
+                          className="mx-auto flex items-center justify-center"
                           style={{
+                            width: `${logoSize}px`,
+                            height: `${logoSize}px`,
                             backgroundColor: primaryColor,
                             borderRadius: `${borderRadius / 1.5}px`
                           }}
                         >
-                          <Wifi className="h-10 w-10 text-white" />
+                          <Wifi className="text-white" style={{ width: `${logoSize / 2}px`, height: `${logoSize / 2}px` }} />
                         </div>
                       )}
                     </div>
