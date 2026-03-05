@@ -87,11 +87,21 @@ export function GuestPortal() {
             }
 
             // 4. Call Vercel Serverless Function to authorize the MAC on Unifi
+            const redirectUrl = originalUrl;
+            // Skip the actual API call if running locally (since Vite doesn't run the Vercel Edge functions)
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                console.log("Ambiente Local Detectado: Simulando sucesso na API Unifi Vercel.");
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 1000);
+                return;
+            }
+
             const response = await fetch('/api/authorize', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authData.session?.access_token}`
+                    'Authorization': `Bearer ${authData.session?.access_token || ''}`
                 },
                 body: JSON.stringify({
                     clientMac,
@@ -101,12 +111,13 @@ export function GuestPortal() {
             });
 
             const data = await response.json();
+
             if (!response.ok) {
-                throw new Error(data.error || 'Erro ao autorizar dispositivo');
+                throw new Error(data.error || 'Falha ao autorizar dispositivo na rede UniFi');
             }
 
-            // 3. Redirect user to original URL
-            window.location.href = originalUrl;
+            // 5. Success: Redirect user across the internet
+            window.location.href = redirectUrl;
 
         } catch (err: any) {
             console.error(err);
