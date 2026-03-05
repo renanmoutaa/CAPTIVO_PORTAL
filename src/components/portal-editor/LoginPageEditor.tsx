@@ -22,6 +22,9 @@ import { Slider } from "../ui/slider";
 import { Badge } from "../ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { usePortalSettings } from "../../contexts/PortalSettingsContext";
+import { supabase } from "../../lib/supabase";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 
 const templates = [
   { id: "modern", name: "Moderno", bg: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", primary: "#667eea" },
@@ -82,6 +85,47 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
   const setCardShadow = (v: any) => updateSetting('card_shadow', v);
   const blurEffect = settings.blur_effect;
   const setBlurEffect = (v: any) => updateSetting('blur_effect', v);
+
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingBg, setUploadingBg] = useState(false);
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'background') => {
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      if (type === 'logo') setUploadingLogo(true);
+      else setUploadingBg(true);
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('portal_assets')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('portal_assets')
+        .getPublicUrl(filePath);
+
+      if (type === 'logo') {
+        setLogoUrl(data.publicUrl);
+        setShowLogo(true);
+      } else {
+        setBackgroundImage(data.publicUrl);
+        setBackgroundType("image");
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Erro ao fazer upload da imagem. Certifique-se de que o SQL do Bucket "portal_assets" foi executado corretamente no Supabase.');
+    } finally {
+      if (type === 'logo') setUploadingLogo(false);
+      else setUploadingBg(false);
+    }
+  };
 
   const getBackgroundStyle = () => {
     if (backgroundType === "gradient") {
@@ -237,7 +281,7 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
 
                   {backgroundType === "image" && (
                     <div className="space-y-2">
-                      <Label className="text-xs">URL da Imagem</Label>
+                      <Label className="text-xs">URL da Imagem Padrão ou Subir do PC</Label>
                       <div className="flex gap-2">
                         <Input
                           placeholder="https://..."
@@ -245,9 +289,18 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                           onChange={(e) => setBackgroundImage(e.target.value)}
                           className="text-xs"
                         />
-                        <Button variant="outline" size="icon">
-                          <Upload className="h-3 w-3" />
-                        </Button>
+                        <div className="relative">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            onChange={(e) => handleImageUpload(e, 'background')}
+                            disabled={uploadingBg}
+                          />
+                          <Button variant="outline" size="icon" disabled={uploadingBg}>
+                            {uploadingBg ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -352,9 +405,18 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                             onChange={(e) => setLogoUrl(e.target.value)}
                             className="text-xs"
                           />
-                          <Button variant="outline" size="icon">
-                            <Upload className="h-3 w-3" />
-                          </Button>
+                          <div className="relative">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                              onChange={(e) => handleImageUpload(e, 'logo')}
+                              disabled={uploadingLogo}
+                            />
+                            <Button variant="outline" size="icon" disabled={uploadingLogo}>
+                              {uploadingLogo ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     )}

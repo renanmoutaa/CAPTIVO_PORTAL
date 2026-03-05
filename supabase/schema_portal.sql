@@ -64,3 +64,13 @@ ALTER TABLE public.portal_settings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Acesso Publico Read portal_settings" ON public.portal_settings FOR SELECT USING (true);
 CREATE POLICY "Acesso Publico Insert portal_settings" ON public.portal_settings FOR INSERT WITH CHECK (true);
 CREATE POLICY "Acesso Publico Update portal_settings" ON public.portal_settings FOR UPDATE USING (true);
+
+-- Script SQL para criar o Bucket de Storage (Para upload de logos e bg)
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('portal_assets', 'portal_assets', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Policies do Storage para permitir leitura e upload de imagens
+CREATE POLICY "Leitura Publica Imagens" ON storage.objects FOR SELECT USING ( bucket_id = 'portal_assets' );
+CREATE POLICY "Upload Publico Imagens" ON storage.objects FOR INSERT WITH CHECK ( bucket_id = 'portal_assets' );
+CREATE POLICY "Update Publico Imagens" ON storage.objects FOR UPDATE USING ( bucket_id = 'portal_assets' );
