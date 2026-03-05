@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { 
+import {
   Save,
   Eye,
   Download,
@@ -18,8 +18,19 @@ import { SuccessPageEditor } from "./portal-editor/SuccessPageEditor";
 import { AuthenticationSettings } from "./portal-editor/AuthenticationSettings";
 import { AdvancedSettings } from "./portal-editor/AdvancedSettings";
 import { Badge } from "./ui/badge";
+import { PortalSettingsProvider, usePortalSettings } from "../contexts/PortalSettingsContext";
+import { Loader2 } from "lucide-react";
 
 export function PortalEditor() {
+  return (
+    <PortalSettingsProvider>
+      <PortalEditorContent />
+    </PortalSettingsProvider>
+  );
+}
+
+function PortalEditorContent() {
+  const { saveSettings, loading } = usePortalSettings();
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [activeEditor, setActiveEditor] = useState<"login" | "success">("login");
 
@@ -56,8 +67,8 @@ export function PortalEditor() {
             <Download className="h-4 w-4" />
             Exportar
           </Button>
-          <Button className="gap-2">
-            <Save className="h-4 w-4" />
+          <Button className="gap-2" onClick={saveSettings} disabled={loading}>
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             Salvar Alterações
           </Button>
         </div>

@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { Switch } from "../ui/switch";
-import { 
+import {
   Upload,
   Palette,
   Type,
@@ -21,8 +20,8 @@ import { Separator } from "../ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Slider } from "../ui/slider";
 import { Badge } from "../ui/badge";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import { usePortalSettings } from "../../contexts/PortalSettingsContext";
 
 const templates = [
   { id: "modern", name: "Moderno", bg: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", primary: "#667eea" },
@@ -41,37 +40,48 @@ const fonts = [
   { value: "playfair", label: "Playfair Display" },
 ];
 
-const elementTypes = [
-  { id: "logo", name: "Logo", icon: ImageIcon },
-  { id: "title", name: "Título", icon: Type },
-  { id: "subtitle", name: "Subtítulo", icon: Type },
-  { id: "buttons", name: "Botões de Login", icon: Palette },
-  { id: "footer", name: "Rodapé", icon: Type },
-];
-
 interface LoginPageEditorProps {
   viewMode: "desktop" | "tablet" | "mobile";
   previewWidth: string;
 }
 
 export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps) {
-  const [backgroundColor, setBackgroundColor] = useState("#1e293b");
-  const [backgroundType, setBackgroundType] = useState<"solid" | "gradient" | "image">("gradient");
-  const [gradientStart, setGradientStart] = useState("#667eea");
-  const [gradientEnd, setGradientEnd] = useState("#764ba2");
-  const [primaryColor, setPrimaryColor] = useState("#667eea");
-  const [logoUrl, setLogoUrl] = useState("");
-  const [backgroundImage, setBackgroundImage] = useState("");
-  const [borderRadius, setBorderRadius] = useState([16]);
-  const [opacity, setOpacity] = useState([95]);
-  const [font, setFont] = useState("inter");
-  const [title, setTitle] = useState("Conecte-se ao WiFi Grátis");
-  const [subtitle, setSubtitle] = useState("Faça login para continuar navegando");
-  const [showLogo, setShowLogo] = useState(true);
-  const [showTitle, setShowTitle] = useState(true);
-  const [showSubtitle, setShowSubtitle] = useState(true);
-  const [cardShadow, setCardShadow] = useState(true);
-  const [blurEffect, setBlurEffect] = useState(false);
+  const { settings, updateSetting } = usePortalSettings();
+
+  const backgroundType = settings.background_type;
+  const setBackgroundType = (v: any) => updateSetting('background_type', v);
+  const backgroundColor = settings.background_color;
+  const setBackgroundColor = (v: any) => updateSetting('background_color', v);
+  const gradientStart = settings.gradient_start;
+  const setGradientStart = (v: any) => updateSetting('gradient_start', v);
+  const gradientEnd = settings.gradient_end;
+  const setGradientEnd = (v: any) => updateSetting('gradient_end', v);
+  const primaryColor = settings.primary_color;
+  const setPrimaryColor = (v: any) => updateSetting('primary_color', v);
+  const logoUrl = settings.logo_url;
+  const setLogoUrl = (v: any) => updateSetting('logo_url', v);
+  const backgroundImage = settings.background_image;
+  const setBackgroundImage = (v: any) => updateSetting('background_image', v);
+  const borderRadius = settings.border_radius;
+  const setBorderRadius = (v: number[]) => updateSetting('border_radius', v[0]);
+  const opacity = settings.opacity;
+  const setOpacity = (v: number[]) => updateSetting('opacity', v[0]);
+  const font = settings.font_family;
+  const setFont = (v: any) => updateSetting('font_family', v);
+  const title = settings.title_text;
+  const setTitle = (v: any) => updateSetting('title_text', v);
+  const subtitle = settings.subtitle_text;
+  const setSubtitle = (v: any) => updateSetting('subtitle_text', v);
+  const showLogo = settings.show_logo;
+  const setShowLogo = (v: any) => updateSetting('show_logo', v);
+  const showTitle = settings.show_title;
+  const setShowTitle = (v: any) => updateSetting('show_title', v);
+  const showSubtitle = settings.show_subtitle;
+  const setShowSubtitle = (v: any) => updateSetting('show_subtitle', v);
+  const cardShadow = settings.card_shadow;
+  const setCardShadow = (v: any) => updateSetting('card_shadow', v);
+  const blurEffect = settings.blur_effect;
+  const setBlurEffect = (v: any) => updateSetting('blur_effect', v);
 
   const getBackgroundStyle = () => {
     if (backgroundType === "gradient") {
@@ -117,7 +127,7 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                   onClick={() => applyTemplate(template)}
                   className="group relative"
                 >
-                  <div 
+                  <div
                     className="aspect-square rounded-lg border-2 border-slate-200 overflow-hidden hover:border-blue-500 transition-all hover:scale-105"
                     style={{ background: template.bg }}
                   >
@@ -168,13 +178,13 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                     <div className="space-y-2">
                       <Label className="text-xs">Cor de Fundo</Label>
                       <div className="flex gap-2">
-                        <Input 
+                        <Input
                           type="color"
                           value={backgroundColor}
                           onChange={(e) => setBackgroundColor(e.target.value)}
                           className="w-12 h-10 p-1"
                         />
-                        <Input 
+                        <Input
                           value={backgroundColor}
                           onChange={(e) => setBackgroundColor(e.target.value)}
                           placeholder="#000000"
@@ -189,13 +199,13 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                       <div className="space-y-2">
                         <Label className="text-xs">Cor Inicial</Label>
                         <div className="flex gap-2">
-                          <Input 
+                          <Input
                             type="color"
                             value={gradientStart}
                             onChange={(e) => setGradientStart(e.target.value)}
                             className="w-12 h-10 p-1"
                           />
-                          <Input 
+                          <Input
                             value={gradientStart}
                             onChange={(e) => setGradientStart(e.target.value)}
                             className="text-xs"
@@ -205,20 +215,20 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                       <div className="space-y-2">
                         <Label className="text-xs">Cor Final</Label>
                         <div className="flex gap-2">
-                          <Input 
+                          <Input
                             type="color"
                             value={gradientEnd}
                             onChange={(e) => setGradientEnd(e.target.value)}
                             className="w-12 h-10 p-1"
                           />
-                          <Input 
+                          <Input
                             value={gradientEnd}
                             onChange={(e) => setGradientEnd(e.target.value)}
                             className="text-xs"
                           />
                         </div>
                       </div>
-                      <div 
+                      <div
                         className="h-12 rounded-lg border border-slate-200"
                         style={{ background: `linear-gradient(135deg, ${gradientStart} 0%, ${gradientEnd} 100%)` }}
                       />
@@ -229,7 +239,7 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                     <div className="space-y-2">
                       <Label className="text-xs">URL da Imagem</Label>
                       <div className="flex gap-2">
-                        <Input 
+                        <Input
                           placeholder="https://..."
                           value={backgroundImage}
                           onChange={(e) => setBackgroundImage(e.target.value)}
@@ -255,13 +265,13 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                   <div className="space-y-2">
                     <Label className="text-xs">Cor Primária</Label>
                     <div className="flex gap-2">
-                      <Input 
+                      <Input
                         type="color"
                         value={primaryColor}
                         onChange={(e) => setPrimaryColor(e.target.value)}
                         className="w-12 h-10 p-1"
                       />
-                      <Input 
+                      <Input
                         value={primaryColor}
                         onChange={(e) => setPrimaryColor(e.target.value)}
                         className="text-xs"
@@ -295,8 +305,8 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                       <Label className="text-xs">Bordas Arredondadas</Label>
                       <span className="text-xs text-slate-600">{borderRadius}px</span>
                     </div>
-                    <Slider 
-                      value={borderRadius} 
+                    <Slider
+                      value={[borderRadius]}
                       onValueChange={setBorderRadius}
                       max={40}
                       step={2}
@@ -308,8 +318,8 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                       <Label className="text-xs">Opacidade</Label>
                       <span className="text-xs text-slate-600">{opacity}%</span>
                     </div>
-                    <Slider 
-                      value={opacity} 
+                    <Slider
+                      value={[opacity]}
                       onValueChange={setOpacity}
                       max={100}
                       step={5}
@@ -336,7 +346,7 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                       <div className="space-y-2 pl-4 border-l-2 border-slate-200">
                         <Label className="text-xs">URL da Logo</Label>
                         <div className="flex gap-2">
-                          <Input 
+                          <Input
                             placeholder="https://..."
                             value={logoUrl}
                             onChange={(e) => setLogoUrl(e.target.value)}
@@ -359,7 +369,7 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                     {showTitle && (
                       <div className="space-y-2 pl-4 border-l-2 border-slate-200">
                         <Label className="text-xs">Texto do Título</Label>
-                        <Input 
+                        <Input
                           value={title}
                           onChange={(e) => setTitle(e.target.value)}
                           className="text-xs"
@@ -377,7 +387,7 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                     {showSubtitle && (
                       <div className="space-y-2 pl-4 border-l-2 border-slate-200">
                         <Label className="text-xs">Texto do Subtítulo</Label>
-                        <Textarea 
+                        <Textarea
                           value={subtitle}
                           onChange={(e) => setSubtitle(e.target.value)}
                           className="text-xs"
@@ -407,9 +417,9 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
           </CardHeader>
           <CardContent className="p-8 bg-slate-50">
             <div className="mx-auto transition-all duration-300" style={{ maxWidth: previewWidth }}>
-              <div 
+              <div
                 className="rounded-xl overflow-hidden border-4 border-slate-300 shadow-2xl"
-                style={{ 
+                style={{
                   background: getBackgroundStyle(),
                   backgroundSize: "cover",
                   backgroundPosition: "center",
@@ -421,11 +431,11 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                   backdropFilter: blurEffect ? "blur(10px)" : "none"
                 }}
               >
-                <div 
+                <div
                   className="bg-white w-full max-w-md transition-all duration-300"
-                  style={{ 
+                  style={{
                     borderRadius: `${borderRadius}px`,
-                    opacity: opacity[0] / 100,
+                    opacity: opacity / 100,
                     padding: "2.5rem",
                     boxShadow: cardShadow ? "0 25px 50px -12px rgba(0, 0, 0, 0.25)" : "none"
                   }}
@@ -433,17 +443,17 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                   {showLogo && (
                     <div className="mb-6 text-center">
                       {logoUrl ? (
-                        <div 
+                        <div
                           className="w-20 h-20 bg-slate-200 rounded-xl mx-auto bg-cover bg-center"
-                          style={{ 
+                          style={{
                             borderRadius: `${borderRadius / 1.5}px`,
                             backgroundImage: logoUrl ? `url(${logoUrl})` : "none"
                           }}
                         />
                       ) : (
-                        <div 
+                        <div
                           className="w-20 h-20 mx-auto flex items-center justify-center"
-                          style={{ 
+                          style={{
                             backgroundColor: primaryColor,
                             borderRadius: `${borderRadius / 1.5}px`
                           }}
@@ -453,9 +463,9 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                       )}
                     </div>
                   )}
-                  
+
                   {showTitle && (
-                    <h2 
+                    <h2
                       className="text-slate-900 text-center mb-2"
                       style={{ fontFamily: font }}
                     >
@@ -464,37 +474,37 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                   )}
 
                   {showSubtitle && (
-                    <p 
+                    <p
                       className="text-sm text-slate-600 text-center mb-8"
                       style={{ fontFamily: font }}
                     >
                       {subtitle}
                     </p>
                   )}
-                  
+
                   <div className="space-y-3">
-                    <Button 
+                    <Button
                       className="w-full transition-all hover:scale-105"
-                      style={{ 
+                      style={{
                         backgroundColor: primaryColor,
                         borderRadius: `${borderRadius / 2}px`
                       }}
                     >
                       Continuar com Facebook
                     </Button>
-                    <Button 
+                    <Button
                       className="w-full transition-all hover:scale-105"
                       variant="outline"
-                      style={{ 
+                      style={{
                         borderRadius: `${borderRadius / 2}px`
                       }}
                     >
                       Continuar com Google
                     </Button>
-                    <Button 
+                    <Button
                       className="w-full transition-all hover:scale-105"
                       variant="outline"
-                      style={{ 
+                      style={{
                         borderRadius: `${borderRadius / 2}px`
                       }}
                     >
@@ -502,7 +512,7 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                     </Button>
                   </div>
 
-                  <p 
+                  <p
                     className="text-xs text-slate-500 text-center mt-6"
                     style={{ fontFamily: font }}
                   >

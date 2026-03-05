@@ -6,8 +6,11 @@ import { Badge } from "../ui/badge";
 import { Globe, Smartphone, Mail, Key, Bot, Zap, CheckCircle } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
+import { usePortalSettings } from "../../contexts/PortalSettingsContext";
 
 export function AuthenticationSettings() {
+  const { settings, updateSetting } = usePortalSettings();
+
   return (
     <div className="grid lg:grid-cols-2 gap-6">
       <div className="space-y-6">
@@ -28,7 +31,7 @@ export function AuthenticationSettings() {
                   </div>
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch checked={settings.login_facebook} onCheckedChange={(v: boolean) => updateSetting('login_facebook', v)} />
             </div>
 
             <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
@@ -43,7 +46,7 @@ export function AuthenticationSettings() {
                   </div>
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch checked={settings.login_google} onCheckedChange={(v: boolean) => updateSetting('login_google', v)} />
             </div>
 
             <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
@@ -58,7 +61,7 @@ export function AuthenticationSettings() {
                   </div>
                 </div>
               </div>
-              <Switch />
+              <Switch checked={settings.login_instagram} onCheckedChange={(v: boolean) => updateSetting('login_instagram', v)} />
             </div>
 
             <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
@@ -73,7 +76,7 @@ export function AuthenticationSettings() {
                   </div>
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch checked={settings.login_sms} onCheckedChange={(v: boolean) => updateSetting('login_sms', v)} />
             </div>
 
             <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
@@ -88,7 +91,7 @@ export function AuthenticationSettings() {
                   </div>
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch checked={settings.login_email} onCheckedChange={(v: boolean) => updateSetting('login_email', v)} />
             </div>
 
             <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
@@ -103,7 +106,7 @@ export function AuthenticationSettings() {
                   </div>
                 </div>
               </div>
-              <Switch />
+              <Switch checked={settings.login_voucher} onCheckedChange={(v: boolean) => updateSetting('login_voucher', v)} />
             </div>
           </CardContent>
         </Card>
@@ -115,24 +118,42 @@ export function AuthenticationSettings() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Facebook App ID</Label>
-              <Input placeholder="Digite o App ID do Facebook" />
+              <Input
+                placeholder="Digite o App ID do Facebook"
+                value={settings.facebook_app_id}
+                onChange={(e) => updateSetting('facebook_app_id', e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
               <Label>Facebook App Secret</Label>
-              <Input type="password" placeholder="Digite o App Secret" />
+              <Input
+                type="password"
+                placeholder="Digite o App Secret"
+                value={settings.facebook_app_secret}
+                onChange={(e) => updateSetting('facebook_app_secret', e.target.value)}
+              />
             </div>
 
             <Separator />
 
             <div className="space-y-2">
               <Label>Google Client ID</Label>
-              <Input placeholder="Digite o Client ID do Google" />
+              <Input
+                placeholder="Digite o Client ID do Google"
+                value={settings.google_client_id}
+                onChange={(e) => updateSetting('google_client_id', e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
               <Label>Google Client Secret</Label>
-              <Input type="password" placeholder="Digite o Client Secret" />
+              <Input
+                type="password"
+                placeholder="Digite o Client Secret"
+                value={settings.google_client_secret}
+                onChange={(e) => updateSetting('google_client_secret', e.target.value)}
+              />
             </div>
           </CardContent>
         </Card>
@@ -141,28 +162,31 @@ export function AuthenticationSettings() {
       <div className="space-y-6">
         <Card className="border-slate-200">
           <CardHeader>
-            <CardTitle className="text-slate-900">Campos do Formulário</CardTitle>
+            <CardTitle className="text-slate-900">Campos do Formulário (Obrigatórios)</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {[
-              { label: "Nome Completo", required: true },
-              { label: "Email", required: true },
-              { label: "Telefone", required: true },
-              { label: "Data de Nascimento", required: false },
-              { label: "CPF", required: false },
-              { label: "Gênero", required: false },
-              { label: "Código Postal", required: false },
-              { label: "Empresa", required: false },
-              { label: "Cargo", required: false }
-            ].map((field, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+              { id: "field_name_required", label: "Nome Completo" },
+              { id: "field_email_required", label: "Email" },
+              { id: "field_phone_required", label: "Telefone" },
+              { id: "field_birthdate_required", label: "Data de Nascimento" },
+              { id: "field_cpf_required", label: "CPF" },
+              { id: "field_gender_required", label: "Gênero" },
+              { id: "field_zipcode_required", label: "Código Postal" },
+              { id: "field_company_required", label: "Empresa" },
+              { id: "field_role_required", label: "Cargo" }
+            ].map((field) => (
+              <div key={field.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                 <div className="flex items-center gap-2">
                   <Label>{field.label}</Label>
-                  {field.required && (
+                  {(settings as any)[field.id] && (
                     <Badge variant="secondary" className="text-xs">Obrigatório</Badge>
                   )}
                 </div>
-                <Switch defaultChecked={field.required} />
+                <Switch
+                  checked={(settings as any)[field.id]}
+                  onCheckedChange={(v: boolean) => updateSetting(field.id as any, v)}
+                />
               </div>
             ))}
           </CardContent>
@@ -180,7 +204,7 @@ export function AuthenticationSettings() {
                   Verificar formato de email
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch checked={settings.validate_email} onCheckedChange={(v: boolean) => updateSetting('validate_email', v)} />
             </div>
 
             <div className="flex items-center justify-between">
@@ -190,7 +214,7 @@ export function AuthenticationSettings() {
                   Verificar CPF válido
                 </div>
               </div>
-              <Switch />
+              <Switch checked={settings.validate_cpf} onCheckedChange={(v: boolean) => updateSetting('validate_cpf', v)} />
             </div>
 
             <div className="flex items-center justify-between">
@@ -200,7 +224,7 @@ export function AuthenticationSettings() {
                   Formato brasileiro (11) 99999-9999
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch checked={settings.validate_phone} onCheckedChange={(v: boolean) => updateSetting('validate_phone', v)} />
             </div>
 
             <div className="flex items-center justify-between">
@@ -210,72 +234,12 @@ export function AuthenticationSettings() {
                   Não permitir emails duplicados
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch checked={settings.unique_email} onCheckedChange={(v: boolean) => updateSetting('unique_email', v)} />
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
-          <CardHeader>
-            <CardTitle className="text-slate-900 flex items-center gap-2">
-              <Bot className="h-5 w-5 text-purple-600" />
-              Integração com Agent AI
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-3 bg-white rounded-lg border border-purple-200">
-              <div className="flex items-start gap-2">
-                <Zap className="h-5 w-5 text-purple-600 mt-0.5" />
-                <div>
-                  <div className="text-sm text-slate-900">Automação Ativa</div>
-                  <div className="text-xs text-slate-600 mt-1">
-                    Quando o usuário se autenticar, os dados (nome, email, telefone) serão 
-                    automaticamente salvos no banco de dados e o Agent AI enviará as mensagens 
-                    configuradas via WhatsApp e Email.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">Status:</span>
-                <Badge className="bg-green-600">
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  Ativo
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">Mensagens enviadas hoje:</span>
-                <span className="text-slate-900">127</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">Taxa de sucesso:</span>
-                <span className="text-green-600">98.5%</span>
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-2">
-              <Label className="text-sm">Campos capturados pelo Agent AI:</Label>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary">Nome</Badge>
-                <Badge variant="secondary">Email</Badge>
-                <Badge variant="secondary">Telefone</Badge>
-                <Badge variant="secondary">Data/Hora</Badge>
-                <Badge variant="secondary">MAC Address</Badge>
-                <Badge variant="secondary">IP</Badge>
-              </div>
-            </div>
-
-            <Button className="w-full gap-2 bg-purple-600 hover:bg-purple-700">
-              <Bot className="h-4 w-4" />
-              Configurar Agent AI
-            </Button>
           </CardContent>
         </Card>
       </div>
     </div>
   );
 }
+
