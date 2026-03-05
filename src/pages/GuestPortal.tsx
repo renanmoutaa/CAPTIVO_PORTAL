@@ -59,10 +59,34 @@ export function GuestPortal() {
             const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
             if (authError) throw authError;
 
-            // Optional: Save captured lead info to connected_clients or elsewhere
-            // (Assuming serverless logic handles that or we do here)
+            // 2. Extract basic Device Info from UserAgent string
+            let deviceType = "Desconhecido";
+            const ua = navigator.userAgent;
+            if (/android/i.test(ua)) deviceType = "Android";
+            else if (/iPad|iPhone|iPod/.test(ua)) deviceType = "iOS";
+            else if (/Windows/.test(ua)) deviceType = "Windows";
+            else if (/Mac OS/.test(ua)) deviceType = "Mac";
+            else if (/Linux/.test(ua)) deviceType = "Linux";
 
-            // 2. Call Vercel Serverless Function to authorize the MAC on Unifi
+            // 3. Save captured lead info to connected_clients table via UPSERT
+            const { error: dbError } = await supabase
+                .from('connected_clients')
+                .upsert({
+                    mac: clientMac,
+                    name: name || "Visitante Anônimo",
+                    email: email || "n/a",
+                    device: deviceType,
+                    status: 'online',
+                    location: site || 'default',
+                    connected_at: new Date().toISOString()
+                }, { onConflict: 'mac' });
+
+            if (dbError) {
+                console.error("Erro ao salvar cliente no banco:", dbError);
+                // Não vamos bloquear a internet do usuário se dar erro no log do DB.
+            }
+
+            // 4. Call Vercel Serverless Function to authorize the MAC on Unifi
             const response = await fetch('/api/authorize', {
                 method: 'POST',
                 headers: {

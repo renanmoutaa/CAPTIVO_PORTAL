@@ -193,13 +193,20 @@ export function ConnectedClients() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className="text-slate-700">{client.connected}</span>
+                      <span className="text-slate-700">
+                        {new Date(client.connected_at).toLocaleString('pt-BR', {
+                          day: '2-digit', month: '2-digit',
+                          hour: '2-digit', minute: '2-digit'
+                        })}
+                      </span>
                     </TableCell>
                     <TableCell>
-                      <span className="text-slate-700">{client.bandwidth}</span>
+                      <span className="text-slate-700">
+                        {(client.bandwidth_used / (1024 * 1024)).toFixed(1)} MB
+                      </span>
                     </TableCell>
                     <TableCell>
-                      <span className="text-slate-600 text-sm">{client.location}</span>
+                      <span className="text-slate-600 text-sm">{client.location || 'Sem Sede'}</span>
                     </TableCell>
                     <TableCell>
                       <Badge
