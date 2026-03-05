@@ -83,6 +83,12 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
   const setShowSubtitle = (v: any) => updateSetting('show_subtitle', v);
   const cardShadow = settings.card_shadow;
   const setCardShadow = (v: any) => updateSetting('card_shadow', v);
+  const cardBackgroundColor = settings.card_background_color;
+  const setCardBackgroundColor = (v: any) => updateSetting('card_background_color', v);
+  const cardBackgroundImage = settings.card_background_image;
+  const setCardBackgroundImage = (v: any) => updateSetting('card_background_image', v);
+  const cardWidth = settings.card_width;
+  const setCardWidth = (v: number[]) => updateSetting('card_width', v[0]);
   const blurEffect = settings.blur_effect;
   const setBlurEffect = (v: any) => updateSetting('blur_effect', v);
 
@@ -353,6 +359,37 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
               <AccordionItem value="card">
                 <AccordionTrigger className="text-sm">Card de Login</AccordionTrigger>
                 <AccordionContent className="space-y-4">
+                  <div className="space-y-4">
+                    <Label className="text-xs">Cor / Fundo do Card</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="color"
+                        value={cardBackgroundColor}
+                        onChange={(e) => setCardBackgroundColor(e.target.value)}
+                        className="w-12 h-10 p-1"
+                      />
+                      <Input
+                        value={cardBackgroundColor}
+                        onChange={(e) => setCardBackgroundColor(e.target.value)}
+                        className="text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <Label className="text-xs">Largura Máxima do Card</Label>
+                      <span className="text-xs text-slate-600">{cardWidth}px</span>
+                    </div>
+                    <Slider
+                      value={[cardWidth]}
+                      onValueChange={setCardWidth}
+                      min={300}
+                      max={1200}
+                      step={10}
+                    />
+                  </div>
+
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <Label className="text-xs">Bordas Arredondadas</Label>
@@ -494,12 +531,18 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                 }}
               >
                 <div
-                  className="bg-white w-full max-w-md transition-all duration-300"
+                  className="transition-all duration-300"
                   style={{
+                    backgroundColor: cardBackgroundColor,
+                    backgroundImage: cardBackgroundImage ? `url(${cardBackgroundImage})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
                     borderRadius: `${borderRadius}px`,
                     opacity: opacity / 100,
                     padding: "2.5rem",
-                    boxShadow: cardShadow ? "0 25px 50px -12px rgba(0, 0, 0, 0.25)" : "none"
+                    boxShadow: cardShadow ? "0 25px 50px -12px rgba(0, 0, 0, 0.25)" : "none",
+                    width: '100%',
+                    maxWidth: `${cardWidth}px`
                   }}
                 >
                   {showLogo && (
