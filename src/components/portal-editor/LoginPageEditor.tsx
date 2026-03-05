@@ -91,6 +91,8 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
   const setCardWidth = (v: number[]) => updateSetting('card_width', v[0]);
   const cardMinHeight = settings.card_min_height || 0;
   const setCardMinHeight = (v: number[]) => updateSetting('card_min_height', v[0]);
+  const cardImageSize = settings.card_image_size || 100;
+  const setCardImageSize = (v: number[]) => updateSetting('card_image_size', v[0]);
   const logoSize = settings.logo_size || 80;
   const setLogoSize = (v: number[]) => updateSetting('logo_size', v[0]);
   const blurEffect = settings.blur_effect;
@@ -432,6 +434,20 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
 
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
+                      <Label className="text-xs">Tamanho da Imagem no Card</Label>
+                      <span className="text-xs text-slate-600">{cardImageSize}%</span>
+                    </div>
+                    <Slider
+                      value={[cardImageSize]}
+                      onValueChange={setCardImageSize}
+                      min={10}
+                      max={200}
+                      step={5}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
                       <Label className="text-xs">Bordas Arredondadas</Label>
                       <span className="text-xs text-slate-600">{borderRadius}px</span>
                     </div>
@@ -575,14 +591,16 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                   style={{
                     backgroundColor: cardBackgroundColor,
                     backgroundImage: cardBackgroundImage ? `url(${cardBackgroundImage})` : 'none',
-                    backgroundSize: 'cover',
+                    backgroundSize: cardImageSize === 100 ? 'cover' : `${cardImageSize}%`,
+                    backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
                     borderRadius: `${borderRadius}px`,
                     opacity: opacity / 100,
                     padding: "2.5rem",
                     boxShadow: cardShadow ? "0 25px 50px -12px rgba(0, 0, 0, 0.25)" : "none",
                     width: '100%',
-                    maxWidth: `${cardWidth}px`
+                    maxWidth: `${cardWidth}px`,
+                    minHeight: cardMinHeight > 0 ? `${cardMinHeight}px` : 'auto'
                   }}
                 >
                   {showLogo && (

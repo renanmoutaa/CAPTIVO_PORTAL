@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS public.portal_settings (
     card_background_color TEXT DEFAULT '#ffffff',
     card_background_image TEXT DEFAULT '',
     card_width INTEGER DEFAULT 448,
+    card_min_height INTEGER DEFAULT 0,
+    card_image_size INTEGER DEFAULT 100,
     show_logo BOOLEAN DEFAULT true,
     logo_url TEXT DEFAULT '',
     logo_size INTEGER DEFAULT 80,

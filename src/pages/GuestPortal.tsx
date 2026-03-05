@@ -157,7 +157,8 @@ export function GuestPortal() {
                 style={{
                     backgroundColor: settings?.card_background_color || '#ffffff',
                     backgroundImage: settings?.card_background_image ? `url(${settings.card_background_image})` : 'none',
-                    backgroundSize: 'cover',
+                    backgroundSize: settings?.card_image_size && settings.card_image_size !== 100 ? `${settings.card_image_size}%` : 'cover',
+                    backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
                     borderRadius: `${settings?.border_radius || 16}px`,
                     opacity: (settings?.opacity || 100) / 100,

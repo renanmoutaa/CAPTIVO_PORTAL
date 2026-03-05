@@ -19,6 +19,7 @@ export const defaultSettings = {
     card_background_image: '',
     card_width: 448,
     card_min_height: 0,
+    card_image_size: 100,
     show_logo: true,
     logo_url: '',
     logo_size: 80,
