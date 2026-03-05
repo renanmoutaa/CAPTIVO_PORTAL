@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -11,9 +12,9 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import { 
-  Search, 
-  Filter, 
+import {
+  Search,
+  Filter,
   Download,
   MoreVertical,
   UserX,
@@ -27,112 +28,50 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
-const clients = [
-  {
-    id: 1,
-    name: "João Silva",
-    email: "joao@email.com",
-    device: "iPhone 14",
-    ip: "192.168.1.45",
-    mac: "00:1B:44:11:3A:B7",
-    connected: "2h 15m",
-    bandwidth: "245 MB",
-    status: "online",
-    location: "Loja Centro"
-  },
-  {
-    id: 2,
-    name: "Maria Santos",
-    email: "maria@email.com",
-    device: "Samsung Galaxy S23",
-    ip: "192.168.1.52",
-    mac: "00:1B:44:11:3A:B8",
-    connected: "1h 42m",
-    bandwidth: "187 MB",
-    status: "online",
-    location: "Shopping Norte"
-  },
-  {
-    id: 3,
-    name: "Pedro Costa",
-    email: "pedro@email.com",
-    device: "MacBook Pro",
-    ip: "192.168.1.78",
-    mac: "00:1B:44:11:3A:B9",
-    connected: "45m",
-    bandwidth: "523 MB",
-    status: "online",
-    location: "Aeroporto"
-  },
-  {
-    id: 4,
-    name: "Ana Lima",
-    email: "ana@email.com",
-    device: "iPad Air",
-    ip: "192.168.1.23",
-    mac: "00:1B:44:11:3A:C0",
-    connected: "3h 20m",
-    bandwidth: "892 MB",
-    status: "idle",
-    location: "Café Premium"
-  },
-  {
-    id: 5,
-    name: "Carlos Rocha",
-    email: "carlos@email.com",
-    device: "Xiaomi 13",
-    ip: "192.168.1.91",
-    mac: "00:1B:44:11:3A:C1",
-    connected: "5h 10m",
-    bandwidth: "1.2 GB",
-    status: "online",
-    location: "Loja Centro"
-  },
-  {
-    id: 6,
-    name: "Beatriz Alves",
-    email: "beatriz@email.com",
-    device: "Windows Laptop",
-    ip: "192.168.1.105",
-    mac: "00:1B:44:11:3A:C2",
-    connected: "30m",
-    bandwidth: "98 MB",
-    status: "online",
-    location: "Shopping Norte"
-  },
-  {
-    id: 7,
-    name: "Rafael Mendes",
-    email: "rafael@email.com",
-    device: "iPhone 13",
-    ip: "192.168.1.134",
-    mac: "00:1B:44:11:3A:C3",
-    connected: "2h 50m",
-    bandwidth: "456 MB",
-    status: "online",
-    location: "Aeroporto"
-  },
-  {
-    id: 8,
-    name: "Juliana Ferreira",
-    email: "juliana@email.com",
-    device: "Samsung Tab S8",
-    ip: "192.168.1.167",
-    mac: "00:1B:44:11:3A:C4",
-    connected: "1h 15m",
-    bandwidth: "234 MB",
-    status: "idle",
-    location: "Café Premium"
-  }
-];
-
 export function ConnectedClients() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [clients, setClients] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchClients = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('connected_clients')
+        .select('*')
+        .order('connected_at', { ascending: false });
+
+      if (error) {
+        console.error("Error fetching clients:", error);
+      } else {
+        setClients(data || []);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchClients();
+
+    // Subscribe to realtime changes
+    const clientsSubscription = supabase
+      .channel('public:connected_clients')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'connected_clients' }, payload => {
+        fetchClients();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(clientsSubscription);
+    };
+  }, []);
 
   const filteredClients = clients.filter(client =>
     client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.device.toLowerCase().includes(searchTerm.toLowerCase())
+    (client.device && client.device.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -140,7 +79,7 @@ export function ConnectedClients() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-slate-900 mb-2">Clientes Conectados</h1>
-          <p className="text-slate-600">{clients.length} clientes ativos no momento</p>
+          <p className="text-slate-600">{clients.length} clientes registrados</p>
         </div>
         <Button className="gap-2">
           <Download className="h-4 w-4" />
@@ -263,7 +202,7 @@ export function ConnectedClients() {
                       <span className="text-slate-600 text-sm">{client.location}</span>
                     </TableCell>
                     <TableCell>
-                      <Badge 
+                      <Badge
                         variant={client.status === "online" ? "default" : "secondary"}
                         className={client.status === "online" ? "bg-green-500" : ""}
                       >

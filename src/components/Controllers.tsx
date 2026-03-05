@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
-import { 
+import {
   Plus,
   Wifi,
   MapPin,
@@ -28,90 +29,56 @@ import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Separator } from "./ui/separator";
 
-const controllers = [
-  {
-    id: 1,
-    name: "Controladora Principal",
-    location: "Loja Centro - Av. Paulista, 1000",
-    ip: "192.168.1.1",
-    model: "UniFi Dream Machine Pro",
-    clients: 456,
-    maxClients: 500,
-    status: "online",
-    uptime: "45d 12h",
-    load: 65,
-    bandwidth: "1.2 GB/s",
-    version: "7.5.172",
-    site: "default",
-    ssid: "WiFi-Gratuito",
-    accessPoints: 8,
-    networks: 3
-  },
-  {
-    id: 2,
-    name: "Controladora Filial 1",
-    location: "Shopping Norte - Piso L2",
-    ip: "192.168.2.1",
-    model: "UniFi Cloud Key Gen2",
-    clients: 389,
-    maxClients: 400,
-    status: "online",
-    uptime: "32d 8h",
-    load: 52,
-    bandwidth: "980 MB/s",
-    version: "7.5.172",
-    site: "shopping-norte",
-    ssid: "WiFi-Shopping",
-    accessPoints: 6,
-    networks: 2
-  },
-  {
-    id: 3,
-    name: "Controladora Filial 2",
-    location: "Aeroporto - Terminal 2",
-    ip: "192.168.3.1",
-    model: "UniFi Dream Machine",
-    clients: 312,
-    maxClients: 400,
-    status: "online",
-    uptime: "28d 4h",
-    load: 48,
-    bandwidth: "850 MB/s",
-    version: "7.5.172",
-    site: "aeroporto",
-    ssid: "WiFi-Airport",
-    accessPoints: 5,
-    networks: 2
-  },
-  {
-    id: 4,
-    name: "Controladora Café",
-    location: "Café Premium - Rua Oscar Freire",
-    ip: "192.168.4.1",
-    model: "UniFi Cloud Key",
-    clients: 90,
-    maxClients: 100,
-    status: "warning",
-    uptime: "12d 18h",
-    load: 85,
-    bandwidth: "450 MB/s",
-    version: "7.4.156",
-    site: "cafe-premium",
-    ssid: "WiFi-Cafe",
-    accessPoints: 2,
-    networks: 1
-  }
-];
-
 export function Controllers() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [selectedController, setSelectedController] = useState<typeof controllers[0] | null>(null);
+  const [selectedController, setSelectedController] = useState<any | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  const openSettings = (controller: typeof controllers[0]) => {
+  const [controllers, setControllers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchControllers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('controllers')
+        .select('*');
+
+      if (error) {
+        console.error("Error fetching controllers:", error);
+      } else {
+        setControllers(data || []);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchControllers();
+
+    // Subscribe to realtime changes
+    const controllersSubscription = supabase
+      .channel('public:controllers')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'controllers' }, payload => {
+        fetchControllers();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(controllersSubscription);
+    };
+  }, []);
+
+  const openSettings = (controller: any) => {
     setSelectedController(controller);
     setIsSettingsOpen(true);
   };
+
+  const totalClients = controllers.reduce((acc, curr) => acc + (curr.clients_count || 0), 0);
+  const totalAPs = controllers.reduce((acc, curr) => acc + (curr.access_points || 0), 0);
+  const onlineCount = controllers.filter(c => c.status === 'online').length;
 
   return (
     <div className="space-y-6">
@@ -197,7 +164,7 @@ export function Controllers() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-slate-600 text-sm">Total Controladoras</div>
-                <div className="text-slate-900 mt-1">8</div>
+                <div className="text-slate-900 mt-1">{controllers.length}</div>
               </div>
               <Wifi className="h-8 w-8 text-blue-500" />
             </div>
@@ -209,7 +176,7 @@ export function Controllers() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-slate-600 text-sm">Online</div>
-                <div className="text-slate-900 mt-1">7</div>
+                <div className="text-slate-900 mt-1">{onlineCount}</div>
               </div>
               <Activity className="h-8 w-8 text-green-500" />
             </div>
@@ -221,7 +188,7 @@ export function Controllers() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-slate-600 text-sm">Clientes Total</div>
-                <div className="text-slate-900 mt-1">1,247</div>
+                <div className="text-slate-900 mt-1">{totalClients}</div>
               </div>
               <Users className="h-8 w-8 text-purple-500" />
             </div>
@@ -233,7 +200,7 @@ export function Controllers() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-slate-600 text-sm">Access Points</div>
-                <div className="text-slate-900 mt-1">21</div>
+                <div className="text-slate-900 mt-1">{totalAPs}</div>
               </div>
               <Radio className="h-8 w-8 text-orange-500" />
             </div>
@@ -248,12 +215,10 @@ export function Controllers() {
             <CardHeader className="pb-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3">
-                  <div className={`p-3 rounded-lg ${
-                    controller.status === "online" ? "bg-green-50" : "bg-orange-50"
-                  }`}>
-                    <Wifi className={`h-6 w-6 ${
-                      controller.status === "online" ? "text-green-600" : "text-orange-600"
-                    }`} />
+                  <div className={`p-3 rounded-lg ${controller.status === "online" ? "bg-green-50" : "bg-orange-50"
+                    }`}>
+                    <Wifi className={`h-6 w-6 ${controller.status === "online" ? "text-green-600" : "text-orange-600"
+                      }`} />
                   </div>
                   <div>
                     <CardTitle className="text-slate-900">{controller.name}</CardTitle>
@@ -263,7 +228,7 @@ export function Controllers() {
                     </div>
                   </div>
                 </div>
-                <Badge 
+                <Badge
                   variant={controller.status === "online" ? "default" : "secondary"}
                   className={controller.status === "online" ? "bg-green-500" : "bg-orange-500"}
                 >
@@ -296,7 +261,7 @@ export function Controllers() {
                 </div>
                 <div>
                   <div className="text-slate-600">Access Points</div>
-                  <div className="text-slate-900">{controller.accessPoints} APs</div>
+                  <div className="text-slate-900">{controller.access_points} APs</div>
                 </div>
               </div>
 
@@ -304,10 +269,10 @@ export function Controllers() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-600">Clientes Conectados</span>
-                  <span className="text-slate-900">{controller.clients} / {controller.maxClients}</span>
+                  <span className="text-slate-900">{controller.clients_count} / {controller.max_clients}</span>
                 </div>
-                <Progress 
-                  value={(controller.clients / controller.maxClients) * 100}
+                <Progress
+                  value={(controller.clients_count / controller.max_clients) * 100}
                   className={controller.load > 80 ? "[&>div]:bg-orange-500" : ""}
                 />
               </div>
@@ -318,7 +283,7 @@ export function Controllers() {
                   <span className="text-slate-600">Carga do Sistema</span>
                   <span className="text-slate-900">{controller.load}%</span>
                 </div>
-                <Progress 
+                <Progress
                   value={controller.load}
                   className={controller.load > 80 ? "[&>div]:bg-orange-500" : ""}
                 />
@@ -331,8 +296,8 @@ export function Controllers() {
                   <span className="text-slate-900">{controller.bandwidth}</span>
                 </div>
                 <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => openSettings(controller)}
                   >
@@ -396,7 +361,7 @@ export function Controllers() {
             {/* UniFi Settings */}
             <div className="space-y-4">
               <h3 className="text-sm text-slate-900">Configurações UniFi</h3>
-              
+
               <div className="space-y-2">
                 <Label className="text-xs">Site UniFi</Label>
                 <Select defaultValue={selectedController?.site}>
@@ -434,7 +399,7 @@ export function Controllers() {
             {/* Limits */}
             <div className="space-y-4">
               <h3 className="text-sm text-slate-900">Limites</h3>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-xs">Máximo de Clientes</Label>
@@ -452,7 +417,7 @@ export function Controllers() {
             {/* Credentials */}
             <div className="space-y-4">
               <h3 className="text-sm text-slate-900">Credenciais de Acesso</h3>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-xs">Usuário Admin</Label>
