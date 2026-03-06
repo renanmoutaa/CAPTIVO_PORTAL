@@ -619,7 +619,7 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
               <div className="flex items-center gap-3">
                 <Badge variant="secondary">{viewMode}</Badge>
                 <Button variant="outline" size="sm" className="h-7 text-xs" asChild>
-                  <a href="/" target="_blank" rel="noopener noreferrer">
+                  <a href="/guest/s/default" target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-3 w-3 mr-1" />
                     Abrir Portal
                   </a>
