@@ -14,7 +14,8 @@ import {
   Plus,
   Trash2,
   GripVertical,
-  Image as ImageIcon
+  Image as ImageIcon,
+  ExternalLink
 } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -93,6 +94,12 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
   const setCardMinHeight = (v: number[]) => updateSetting('card_min_height', v[0]);
   const cardImageSize = settings.card_image_size || 100;
   const setCardImageSize = (v: number[]) => updateSetting('card_image_size', v[0]);
+  const cardImagePositionX = settings.card_image_position_x || 50;
+  const setCardImagePositionX = (v: number[]) => updateSetting('card_image_position_x', v[0]);
+  const cardImagePositionY = settings.card_image_position_y || 50;
+  const setCardImagePositionY = (v: number[]) => updateSetting('card_image_position_y', v[0]);
+  const formMarginTop = settings.form_margin_top || 0;
+  const setFormMarginTop = (v: number[]) => updateSetting('form_margin_top', v[0]);
   const logoSize = settings.logo_size || 80;
   const setLogoSize = (v: number[]) => updateSetting('logo_size', v[0]);
   const blurEffect = settings.blur_effect;
@@ -448,6 +455,34 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
 
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
+                      <Label className="text-xs">Posição X da Imagem</Label>
+                      <span className="text-xs text-slate-600">{cardImagePositionX}%</span>
+                    </div>
+                    <Slider
+                      value={[cardImagePositionX]}
+                      onValueChange={setCardImagePositionX}
+                      min={0}
+                      max={100}
+                      step={1}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <Label className="text-xs">Posição Y da Imagem</Label>
+                      <span className="text-xs text-slate-600">{cardImagePositionY}%</span>
+                    </div>
+                    <Slider
+                      value={[cardImagePositionY]}
+                      onValueChange={setCardImagePositionY}
+                      min={0}
+                      max={100}
+                      step={1}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
                       <Label className="text-xs">Bordas Arredondadas</Label>
                       <span className="text-xs text-slate-600">{borderRadius}px</span>
                     </div>
@@ -532,6 +567,20 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                       </div>
                     )}
 
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <Label className="text-xs">Deslocamento Vertical (Botões/Margin Top)</Label>
+                        <span className="text-xs text-slate-600">{formMarginTop}px</span>
+                      </div>
+                      <Slider
+                        value={[formMarginTop]}
+                        onValueChange={setFormMarginTop}
+                        min={0}
+                        max={500}
+                        step={10}
+                      />
+                    </div>
+
                     <Separator />
 
                     <div className="flex items-center justify-between">
@@ -567,7 +616,15 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                 <Eye className="h-4 w-4" />
                 Preview em Tempo Real
               </CardTitle>
-              <Badge variant="secondary">{viewMode}</Badge>
+              <div className="flex items-center gap-3">
+                <Badge variant="secondary">{viewMode}</Badge>
+                <Button variant="outline" size="sm" className="h-7 text-xs" asChild>
+                  <a href="/" target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-3 w-3 mr-1" />
+                    Abrir Portal
+                  </a>
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="p-8 bg-slate-50">
@@ -593,7 +650,7 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                     backgroundImage: cardBackgroundImage ? `url(${cardBackgroundImage})` : 'none',
                     backgroundSize: cardImageSize === 100 ? 'cover' : `${cardImageSize}%`,
                     backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center',
+                    backgroundPosition: `${cardImagePositionX}% ${cardImagePositionY}%`,
                     borderRadius: `${borderRadius}px`,
                     opacity: opacity / 100,
                     padding: "2.5rem",
@@ -603,88 +660,89 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                     minHeight: cardMinHeight > 0 ? `${cardMinHeight}px` : 'auto'
                   }}
                 >
-                  {showLogo && (
-                    <div className="mb-6 text-center">
-                      {logoUrl ? (
-                        <div
-                          className="bg-slate-200 rounded-xl mx-auto bg-cover bg-center"
-                          style={{
-                            width: `${logoSize}px`,
-                            height: `${logoSize}px`,
-                            borderRadius: `${borderRadius / 1.5}px`,
-                            backgroundImage: logoUrl ? `url(${logoUrl})` : "none"
-                          }}
-                        />
-                      ) : (
-                        <div
-                          className="mx-auto flex items-center justify-center"
-                          style={{
-                            width: `${logoSize}px`,
-                            height: `${logoSize}px`,
-                            backgroundColor: primaryColor,
-                            borderRadius: `${borderRadius / 1.5}px`
-                          }}
-                        >
-                          <Wifi className="text-white" style={{ width: `${logoSize / 2}px`, height: `${logoSize / 2}px` }} />
-                        </div>
-                      )}
+                  <div style={{ marginTop: `${formMarginTop}px` }}>
+                    {showLogo && (
+                      <div className="mb-6 text-center">
+                        {logoUrl ? (
+                          <div
+                            className="bg-slate-200 rounded-xl mx-auto bg-cover bg-center"
+                            style={{
+                              width: `${logoSize}px`,
+                              height: `${logoSize}px`,
+                              borderRadius: `${borderRadius / 1.5}px`,
+                              backgroundImage: logoUrl ? `url(${logoUrl})` : "none"
+                            }}
+                          />
+                        ) : (
+                          <div
+                            className="mx-auto flex items-center justify-center"
+                            style={{
+                              width: `${logoSize}px`,
+                              height: `${logoSize}px`,
+                              backgroundColor: primaryColor,
+                              borderRadius: `${borderRadius / 1.5}px`
+                            }}
+                          >
+                            <Wifi className="text-white" style={{ width: `${logoSize / 2}px`, height: `${logoSize / 2}px` }} />
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {showTitle && (
+                      <h2
+                        className="text-slate-900 text-center mb-2"
+                        style={{ fontFamily: font }}
+                      >
+                        {title}
+                      </h2>
+                    )}
+
+                    {showSubtitle && (
+                      <p
+                        className="text-sm text-slate-600 text-center mb-8"
+                        style={{ fontFamily: font }}
+                      >
+                        {subtitle}
+                      </p>
+                    )}
+
+                    <div className="space-y-3">
+                      <Button
+                        className="w-full transition-all hover:scale-105"
+                        style={{
+                          backgroundColor: primaryColor,
+                          borderRadius: `${borderRadius / 2}px`
+                        }}
+                      >
+                        Continuar com Facebook
+                      </Button>
+                      <Button
+                        className="w-full transition-all hover:scale-105"
+                        variant="outline"
+                        style={{
+                          borderRadius: `${borderRadius / 2}px`
+                        }}
+                      >
+                        Continuar com Google
+                      </Button>
+                      <Button
+                        className="w-full transition-all hover:scale-105"
+                        variant="outline"
+                        style={{
+                          borderRadius: `${borderRadius / 2}px`
+                        }}
+                      >
+                        Continuar com Email
+                      </Button>
                     </div>
-                  )}
 
-                  {showTitle && (
-                    <h2
-                      className="text-slate-900 text-center mb-2"
-                      style={{ fontFamily: font }}
-                    >
-                      {title}
-                    </h2>
-                  )}
-
-                  {showSubtitle && (
-                    <p
-                      className="text-sm text-slate-600 text-center mb-8"
-                      style={{ fontFamily: font }}
-                    >
-                      {subtitle}
-                    </p>
-                  )}
-
-                  <div className="space-y-3">
-                    <Button
-                      className="w-full transition-all hover:scale-105"
-                      style={{
-                        backgroundColor: primaryColor,
-                        borderRadius: `${borderRadius / 2}px`
-                      }}
-                    >
-                      Continuar com Facebook
-                    </Button>
-                    <Button
-                      className="w-full transition-all hover:scale-105"
-                      variant="outline"
-                      style={{
-                        borderRadius: `${borderRadius / 2}px`
-                      }}
-                    >
-                      Continuar com Google
-                    </Button>
-                    <Button
-                      className="w-full transition-all hover:scale-105"
-                      variant="outline"
-                      style={{
-                        borderRadius: `${borderRadius / 2}px`
-                      }}
-                    >
-                      Continuar com Email
-                    </Button>
+                    <div className="space-y-2 mt-6">
+                      <p className="text-center text-xs text-slate-500">
+                        Ao continuar, você concorda com nossos <a href="#" className="underline">Termos de Uso</a>
+                      </p>
+                    </div>
                   </div>
-
-                  <p
-                    className="text-xs text-slate-500 text-center mt-6"
-                    style={{ fontFamily: font }}
-                  >
-                    Ao continuar, você concorda com nossos <span className="underline cursor-pointer">Termos de Uso</span>
-                  </p>
                 </div>
               </div>
             </div>
