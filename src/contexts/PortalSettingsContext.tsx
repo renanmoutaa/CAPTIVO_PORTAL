@@ -89,10 +89,25 @@ export const PortalSettingsProvider: React.FC<{ children: React.ReactNode }> = (
                 .eq('id', 'default')
                 .single();
 
+            let baseSettings = defaultSettings;
+
             if (error && error.code !== 'PGRST116') { // Ignore row not found
                 console.error('Error fetching portal settings:', error);
             } else if (data) {
-                setSettings({ ...defaultSettings, ...data });
+                baseSettings = { ...defaultSettings, ...data };
+            }
+
+            // Check for local drafts
+            const draft = localStorage.getItem('portal_editor_draft');
+            if (draft) {
+                try {
+                    const parsedDraft = JSON.parse(draft);
+                    setSettings({ ...baseSettings, ...parsedDraft });
+                } catch (e) {
+                    setSettings(baseSettings);
+                }
+            } else {
+                setSettings(baseSettings);
             }
         } catch (e) {
             console.error(e);
@@ -100,6 +115,13 @@ export const PortalSettingsProvider: React.FC<{ children: React.ReactNode }> = (
             setLoading(false);
         }
     };
+
+    // Auto-save draft to localStorage whenever settings change
+    useEffect(() => {
+        if (!loading) {
+            localStorage.setItem('portal_editor_draft', JSON.stringify(settings));
+        }
+    }, [settings, loading]);
 
     const updateSetting = (key: keyof PortalSettings, value: any) => {
         setSettings(prev => ({ ...prev, [key]: value }));
@@ -117,6 +139,10 @@ export const PortalSettingsProvider: React.FC<{ children: React.ReactNode }> = (
                 .upsert(payload);
 
             if (error) throw error;
+
+            // Clear draft on success
+            localStorage.removeItem('portal_editor_draft');
+
             toast.success('Configurações salvas com sucesso!');
         } catch (error) {
             console.error('Error saving settings:', error);
