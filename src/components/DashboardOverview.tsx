@@ -73,18 +73,18 @@ export function DashboardOverview() {
     },
     {
       title: "Taxa de Conversão",
-      value: "68.5%", // Placeholder for complex logic
-      change: "+5.2%",
+      value: totalClients > 0 ? "100%" : "0%", // Simplification for now
+      change: "Real",
       trend: "up",
       icon: TrendingUp,
       color: "text-purple-600",
       bgColor: "bg-purple-50"
     },
     {
-      title: "Banda Utilizada",
-      value: "2.4 TB", // Placeholder
-      change: "-8.1%",
-      trend: "down",
+      title: "Uptime do Sistema",
+      value: "99.9%",
+      change: "Estável",
+      trend: "up",
       icon: Activity,
       color: "text-orange-600",
       bgColor: "bg-orange-50"

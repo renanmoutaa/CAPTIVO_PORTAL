@@ -20,8 +20,8 @@ export function GuestPortal() {
     const [cpf, setCpf] = useState("");
 
     // Unifi Captive Portal params
-    const clientMac = searchParams.get("id");
-    const apMac = searchParams.get("ap");
+    const clientMac = searchParams.get("id") || searchParams.get("mac") || searchParams.get("client_mac");
+    const apMac = searchParams.get("ap") || searchParams.get("ap_mac");
     const originalUrl = searchParams.get("url") || "https://google.com";
 
     useEffect(() => {
@@ -48,7 +48,8 @@ export function GuestPortal() {
         if (e) e.preventDefault();
 
         if (!clientMac) {
-            setError("MAC Address não encontrado. Conecte-se pela rede UniFi.");
+            setError(`MAC Address não encontrado. Conecte-se pela rede UniFi. (Debug: URL=${window.location.search})`);
+            console.error("Missing clientMac in URL params:", window.location.search);
             return;
         }
 

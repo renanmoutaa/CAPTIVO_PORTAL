@@ -94,7 +94,9 @@ export function ConnectedClients() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-slate-600 text-sm">Total Online</div>
-                <div className="text-slate-900 mt-1">1,247</div>
+                <div className="text-slate-900 mt-1 font-bold text-2xl">
+                  {clients.filter(c => c.status === 'online').length}
+                </div>
               </div>
               <Activity className="h-8 w-8 text-green-500" />
             </div>
@@ -106,7 +108,13 @@ export function ConnectedClients() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-slate-600 text-sm">Novos Hoje</div>
-                <div className="text-slate-900 mt-1">342</div>
+                <div className="text-slate-900 mt-1 font-bold text-2xl">
+                  {clients.filter(c => {
+                    const today = new Date().setHours(0, 0, 0, 0);
+                    const clientDate = new Date(c.connected_at).setHours(0, 0, 0, 0);
+                    return clientDate === today;
+                  }).length}
+                </div>
               </div>
               <Clock className="h-8 w-8 text-blue-500" />
             </div>
@@ -117,8 +125,8 @@ export function ConnectedClients() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-slate-600 text-sm">Tempo Médio</div>
-                <div className="text-slate-900 mt-1">2h 34m</div>
+                <div className="text-slate-600 text-sm">Cadastros Totais</div>
+                <div className="text-slate-900 mt-1 font-bold text-2xl">{clients.length}</div>
               </div>
               <Clock className="h-8 w-8 text-purple-500" />
             </div>
@@ -130,7 +138,9 @@ export function ConnectedClients() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-slate-600 text-sm">Banda Total</div>
-                <div className="text-slate-900 mt-1">45.8 GB</div>
+                <div className="text-slate-900 mt-1 font-bold text-2xl">
+                  {(clients.reduce((acc, c) => acc + (c.bandwidth_used || 0), 0) / (1024 * 1024 * 1024)).toFixed(1)} GB
+                </div>
               </div>
               <Activity className="h-8 w-8 text-orange-500" />
             </div>
