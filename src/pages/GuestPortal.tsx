@@ -77,6 +77,8 @@ export function GuestPortal() {
                     mac: clientMac,
                     name: name || "Visitante Anônimo",
                     email: email || "n/a",
+                    phone: phone || null,
+                    cpf: cpf || null,
                     device: deviceType,
                     status: 'online',
                     location: site || 'default',

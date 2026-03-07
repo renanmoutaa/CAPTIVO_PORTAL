@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS public.connected_clients (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     email TEXT NOT NULL,
+    phone TEXT,
+    cpf TEXT,
     device TEXT,
     ip TEXT,
     mac TEXT UNIQUE NOT NULL,

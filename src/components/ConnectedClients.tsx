@@ -189,8 +189,10 @@ export function ConnectedClients() {
                   <TableRow key={client.id}>
                     <TableCell>
                       <div>
-                        <div className="text-slate-900">{client.name}</div>
+                        <div className="text-slate-900 font-medium">{client.name}</div>
                         <div className="text-sm text-slate-500">{client.email}</div>
+                        {client.phone && <div className="text-xs text-blue-600 mt-1">Tel: {client.phone}</div>}
+                        {client.cpf && <div className="text-xs text-slate-400">CPF: {client.cpf}</div>}
                       </div>
                     </TableCell>
                     <TableCell>
