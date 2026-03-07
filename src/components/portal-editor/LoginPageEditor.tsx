@@ -72,6 +72,14 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
   const setOpacity = (v: number[]) => updateSetting('opacity', v[0]);
   const font = settings.font_family;
   const setFont = (v: any) => updateSetting('font_family', v);
+  const inputBgColor = settings.input_bg_color || 'transparent';
+  const setInputBgColor = (v: any) => updateSetting('input_bg_color', v);
+  const inputTextColor = settings.input_text_color || '#ffffff';
+  const setInputTextColor = (v: any) => updateSetting('input_text_color', v);
+  const inputBorderColor = settings.input_border_color || '#cbd5e1';
+  const setInputBorderColor = (v: any) => updateSetting('input_border_color', v);
+  const buttonTextColor = settings.button_text_color || '#ffffff';
+  const setButtonTextColor = (v: any) => updateSetting('button_text_color', v);
   const title = settings.title_text;
   const setTitle = (v: any) => updateSetting('title_text', v);
   const subtitle = settings.subtitle_text;
@@ -349,6 +357,84 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                       />
                     </div>
                   </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-xs">Cor do Texto do Botão</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="color"
+                        value={buttonTextColor}
+                        onChange={(e) => setButtonTextColor(e.target.value)}
+                        className="w-12 h-10 p-1"
+                      />
+                      <Input
+                        value={buttonTextColor}
+                        onChange={(e) => setButtonTextColor(e.target.value)}
+                        className="text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Formulário (Inputs)</Label>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-xs">Cor de Fundo da Caixa de Texto</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="color"
+                        value={inputBgColor === 'transparent' ? '#ffffff' : inputBgColor}
+                        onChange={(e) => setInputBgColor(e.target.value)}
+                        className="w-12 h-10 p-1"
+                      />
+                      <Input
+                        value={inputBgColor}
+                        onChange={(e) => setInputBgColor(e.target.value)}
+                        className="text-xs"
+                        placeholder="Ex: transparent ou #ffffff"
+                      />
+                      <Button variant="outline" size="sm" onClick={() => setInputBgColor('transparent')} className="text-xs px-2">Transp.</Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-xs">Cor do Texto Digitado</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="color"
+                        value={inputTextColor}
+                        onChange={(e) => setInputTextColor(e.target.value)}
+                        className="w-12 h-10 p-1"
+                      />
+                      <Input
+                        value={inputTextColor}
+                        onChange={(e) => setInputTextColor(e.target.value)}
+                        className="text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-xs">Cor da Borda</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="color"
+                        value={inputBorderColor}
+                        onChange={(e) => setInputBorderColor(e.target.value)}
+                        className="w-12 h-10 p-1"
+                      />
+                      <Input
+                        value={inputBorderColor}
+                        onChange={(e) => setInputBorderColor(e.target.value)}
+                        className="text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  <Separator />
 
                   <div className="space-y-2">
                     <Label className="text-xs">Fonte</Label>
@@ -707,34 +793,103 @@ export function LoginPageEditor({ viewMode, previewWidth }: LoginPageEditorProps
                       </p>
                     )}
 
-                    <div className="space-y-3">
-                      <Button
-                        className="w-full transition-all hover:scale-105"
-                        style={{
-                          backgroundColor: primaryColor,
-                          borderRadius: `${borderRadius / 2}px`
-                        }}
-                      >
-                        Continuar com Facebook
-                      </Button>
-                      <Button
-                        className="w-full transition-all hover:scale-105"
-                        variant="outline"
-                        style={{
-                          borderRadius: `${borderRadius / 2}px`
-                        }}
-                      >
-                        Continuar com Google
-                      </Button>
-                      <Button
-                        className="w-full transition-all hover:scale-105"
-                        variant="outline"
-                        style={{
-                          borderRadius: `${borderRadius / 2}px`
-                        }}
-                      >
-                        Continuar com Email
-                      </Button>
+                    <div className="space-y-4">
+                      {settings.login_email && (
+                        <>
+                          <div className="space-y-4">
+                            {settings.field_name_required && (
+                              <input
+                                disabled
+                                type="text"
+                                className="w-full px-4 py-2 border rounded-lg outline-none"
+                                placeholder="Nome Completo"
+                                style={{
+                                  backgroundColor: inputBgColor,
+                                  color: inputTextColor,
+                                  borderColor: inputBorderColor,
+                                }}
+                              />
+                            )}
+                            {settings.field_email_required && (
+                              <input
+                                disabled
+                                type="email"
+                                className="w-full px-4 py-2 border rounded-lg outline-none"
+                                placeholder="Seu E-mail"
+                                style={{
+                                  backgroundColor: inputBgColor,
+                                  color: inputTextColor,
+                                  borderColor: inputBorderColor,
+                                }}
+                              />
+                            )}
+                            {settings.field_phone_required && (
+                              <input
+                                disabled
+                                type="tel"
+                                className="w-full px-4 py-2 border rounded-lg outline-none"
+                                placeholder="Telefone / WhatsApp"
+                                style={{
+                                  backgroundColor: inputBgColor,
+                                  color: inputTextColor,
+                                  borderColor: inputBorderColor,
+                                }}
+                              />
+                            )}
+                            {settings.field_cpf_required && (
+                              <input
+                                disabled
+                                type="text"
+                                className="w-full px-4 py-2 border rounded-lg outline-none"
+                                placeholder="CPF"
+                                style={{
+                                  backgroundColor: inputBgColor,
+                                  color: inputTextColor,
+                                  borderColor: inputBorderColor,
+                                }}
+                              />
+                            )}
+                          </div>
+                          <Button
+                            className="w-full transition-all hover:scale-105"
+                            style={{
+                              backgroundColor: primaryColor,
+                              color: buttonTextColor,
+                              borderRadius: `${borderRadius / 2}px`
+                            }}
+                          >
+                            Conectar à Internet
+                          </Button>
+                        </>
+                      )}
+
+                      {!settings.login_email && (settings.login_facebook || settings.login_google) && (
+                        <div className="space-y-3">
+                          {settings.login_facebook && (
+                            <Button
+                              className="w-full transition-all hover:scale-105"
+                              style={{
+                                backgroundColor: '#1877F2',
+                                color: 'white',
+                                borderRadius: `${borderRadius / 2}px`
+                              }}
+                            >
+                              Continuar com Facebook
+                            </Button>
+                          )}
+                          {settings.login_google && (
+                            <Button
+                              variant="outline"
+                              className="w-full transition-all hover:scale-105"
+                              style={{
+                                borderRadius: `${borderRadius / 2}px`
+                              }}
+                            >
+                              Continuar com Google
+                            </Button>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     <div className="space-y-2 mt-6">

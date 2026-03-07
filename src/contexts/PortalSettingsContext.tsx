@@ -31,6 +31,12 @@ export const defaultSettings = {
     show_subtitle: true,
     subtitle_text: 'Faça login para continuar navegando',
 
+    // Form Customization
+    input_bg_color: 'transparent',
+    input_text_color: '#ffffff',
+    input_border_color: '#cbd5e1',
+    button_text_color: '#ffffff',
+
     // Auth Settings
     login_facebook: true,
     login_google: true,

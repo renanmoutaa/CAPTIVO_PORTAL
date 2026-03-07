@@ -31,6 +31,12 @@ CREATE TABLE IF NOT EXISTS public.portal_settings (
     show_subtitle BOOLEAN DEFAULT true,
     subtitle_text TEXT DEFAULT 'Faça login para continuar navegando',
     
+    -- Estilo do Formulário (Fase 12)
+    input_bg_color TEXT DEFAULT 'transparent',
+    input_text_color TEXT DEFAULT '#ffffff',
+    input_border_color TEXT DEFAULT '#cbd5e1',
+    button_text_color TEXT DEFAULT '#ffffff',
+    
     -- Aba: Autenticacao (AuthenticationSettings)
     login_facebook BOOLEAN DEFAULT true,
     login_google BOOLEAN DEFAULT true,

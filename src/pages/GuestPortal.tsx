@@ -223,9 +223,13 @@ export function GuestPortal() {
                                                 required
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
-                                                className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none"
+                                                className="w-full px-4 py-2 border rounded-lg outline-none"
                                                 placeholder="Nome Completo"
-                                                style={{ focusVisible: { borderColor: settings.primary_color } } as any}
+                                                style={{
+                                                    backgroundColor: settings.input_bg_color || 'transparent',
+                                                    color: settings.input_text_color || '#333333',
+                                                    borderColor: settings.input_border_color || '#cbd5e1',
+                                                }}
                                             />
                                         </div>
                                     )}
@@ -236,8 +240,13 @@ export function GuestPortal() {
                                                 required
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
-                                                className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none"
+                                                className="w-full px-4 py-2 border rounded-lg outline-none"
                                                 placeholder="Seu E-mail"
+                                                style={{
+                                                    backgroundColor: settings.input_bg_color || 'transparent',
+                                                    color: settings.input_text_color || '#333333',
+                                                    borderColor: settings.input_border_color || '#cbd5e1',
+                                                }}
                                             />
                                         </div>
                                     )}
@@ -248,8 +257,13 @@ export function GuestPortal() {
                                                 required
                                                 value={phone}
                                                 onChange={(e) => setPhone(e.target.value)}
-                                                className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none"
+                                                className="w-full px-4 py-2 border rounded-lg outline-none"
                                                 placeholder="Telefone / WhatsApp"
+                                                style={{
+                                                    backgroundColor: settings.input_bg_color || 'transparent',
+                                                    color: settings.input_text_color || '#333333',
+                                                    borderColor: settings.input_border_color || '#cbd5e1',
+                                                }}
                                             />
                                         </div>
                                     )}
@@ -260,8 +274,13 @@ export function GuestPortal() {
                                                 required
                                                 value={cpf}
                                                 onChange={(e) => setCpf(e.target.value)}
-                                                className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none"
+                                                className="w-full px-4 py-2 border rounded-lg outline-none"
                                                 placeholder="CPF"
+                                                style={{
+                                                    backgroundColor: settings.input_bg_color || 'transparent',
+                                                    color: settings.input_text_color || '#333333',
+                                                    borderColor: settings.input_border_color || '#cbd5e1',
+                                                }}
                                             />
                                         </div>
                                     )}
@@ -269,9 +288,10 @@ export function GuestPortal() {
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full py-3 px-4 text-white font-medium shadow transition-all hover:opacity-90 disabled:opacity-70"
+                                        className="w-full py-3 px-4 font-medium shadow transition-all hover:opacity-90 disabled:opacity-70"
                                         style={{
                                             backgroundColor: settings.primary_color,
+                                            color: settings.button_text_color || '#ffffff',
                                             borderRadius: `${settings.border_radius / 2}px`
                                         }}
                                     >
