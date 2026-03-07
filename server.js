@@ -12,6 +12,10 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env.local') });
 dotenv.config();
 
+// Bypass Node.js strict SSL for UniFi self-signed certificates
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 

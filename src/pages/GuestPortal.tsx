@@ -146,7 +146,7 @@ export function GuestPortal() {
 
     return (
         <div
-            className="min-h-screen flex flex-col items-center justify-center p-4 transition-all duration-300"
+            className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 transition-all duration-300 bg-fixed"
             style={{
                 background: getBackgroundStyle(),
                 backgroundSize: "cover",
