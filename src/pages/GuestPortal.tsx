@@ -47,11 +47,8 @@ export function GuestPortal() {
     const handleLogin = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
 
-        if (!clientMac) {
-            setError(`MAC Address não encontrado. Conecte-se pela rede UniFi. (Debug: URL=${window.location.search})`);
-            console.error("Missing clientMac in URL params:", window.location.search);
-            return;
-        }
+        // Caso o usuário acesse o portal livre fora da rede para testar
+        const effectiveMac = clientMac || `teste-${Math.random().toString(36).substring(2, 8)}`;
 
         setLoading(true);
         setError(null);
@@ -74,7 +71,7 @@ export function GuestPortal() {
             const { error: dbError } = await supabase
                 .from('connected_clients')
                 .upsert({
-                    mac: clientMac,
+                    mac: effectiveMac,
                     name: name || "Visitante Anônimo",
                     email: email || "n/a",
                     phone: phone || null,
