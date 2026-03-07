@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import fetch from 'node-fetch';
+import https from 'https';
 import { fileURLToPath } from 'url';
 
 // Convert import.meta.url to __dirname
@@ -12,8 +14,10 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env.local') });
 dotenv.config();
 
-// Bypass Node.js strict SSL for UniFi self-signed certificates
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// Agent to bypass strict SSL for UniFi self-signed certificates
+const httpsAgent = new https.Agent({
+    rejectUnauthorized: false,
+});
 
 
 const app = express();
@@ -54,6 +58,7 @@ app.post('/api/authorize', async (req, res) => {
         // 1. Login to Unifi Controller
         const loginResponse = await fetch(`${unifiUrl}/api/login`, {
             method: 'POST',
+            agent: httpsAgent,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 username: unifiUsername,
@@ -88,6 +93,7 @@ app.post('/api/authorize', async (req, res) => {
 
         const authorizeResponse = await fetch(`${unifiUrl}/api/s/${site}/cmd/stamgr`, {
             method: 'POST',
+            agent: httpsAgent,
             headers: authorizeHeaders,
             body: JSON.stringify(authorizePayload)
         });
@@ -101,6 +107,7 @@ app.post('/api/authorize', async (req, res) => {
         // 3. Optional: Logout from Controller (to invalidate session)
         await fetch(`${unifiUrl}/api/logout`, {
             method: 'POST',
+            agent: httpsAgent,
             headers: authorizeHeaders
         }).catch(e => console.error('Logout failed silently', e));
 

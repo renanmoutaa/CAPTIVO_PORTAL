@@ -145,210 +145,217 @@ export function GuestPortal() {
     };
 
     return (
-        <div
-            className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 transition-all duration-300 bg-fixed"
-            style={{
-                background: getBackgroundStyle(),
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                fontFamily: settings.font_family,
-                backdropFilter: settings.blur_effect ? "blur(10px)" : "none"
-            }}
-        >
-            <Card
-                className="w-full transition-all duration-300 border-0"
+        <>
+            <div
+                className="fixed inset-0 -z-10 transition-all duration-300 pointer-events-none"
                 style={{
-                    backgroundColor: settings?.card_background_color || '#ffffff',
-                    backgroundImage: settings?.card_background_image ? `url(${settings.card_background_image})` : 'none',
-                    backgroundSize: settings?.card_image_size && settings.card_image_size !== 100 ? `${settings.card_image_size}%` : 'cover',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: `${settings?.card_image_position_x || 50}% ${settings?.card_image_position_y || 50}%`,
-                    borderRadius: `${settings?.border_radius || 16}px`,
-                    opacity: (settings?.opacity || 100) / 100,
-                    boxShadow: settings?.card_shadow ? "0 25px 50px -12px rgba(0, 0, 0, 0.25)" : "none",
-                    maxWidth: `${settings?.card_width || 448}px`,
-                    minHeight: settings?.card_min_height && settings.card_min_height > 0 ? `${settings.card_min_height}px` : 'auto'
+                    background: getBackgroundStyle(),
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                }}
+            />
+            <div
+                className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 transition-all duration-300"
+                style={{
+                    fontFamily: settings.font_family,
+                    backdropFilter: settings.blur_effect ? "blur(10px)" : "none"
                 }}
             >
-                <div style={{ marginTop: settings?.form_margin_top ? `${settings.form_margin_top}px` : '0px' }}>
-                    <CardContent className="space-y-4 text-center mt-6">
-                        {settings.show_logo && (
-                            <div className="mb-6 text-center">
-                                {settings.logo_url ? (
-                                    <div
-                                        className="mx-auto bg-cover bg-center"
-                                        style={{
-                                            width: `${settings.logo_size || 80}px`,
-                                            height: `${settings.logo_size || 80}px`,
-                                            borderRadius: `${settings.border_radius / 1.5}px`,
-                                            backgroundImage: `url(${settings.logo_url})`
-                                        }}
-                                    />
-                                ) : (
-                                    <div
-                                        className="mx-auto flex items-center justify-center"
-                                        style={{
-                                            width: `${settings.logo_size || 80}px`,
-                                            height: `${settings.logo_size || 80}px`,
-                                            backgroundColor: settings.primary_color,
-                                            borderRadius: `${settings.border_radius / 1.5}px`
-                                        }}
-                                    >
-                                        <Wifi className="text-white" style={{ width: `${(settings.logo_size || 80) / 2}px`, height: `${(settings.logo_size || 80) / 2}px` }} />
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {settings.show_title && (
-                            <h2 className="text-slate-900 text-center mb-2 text-2xl font-bold">
-                                {settings.title_text}
-                            </h2>
-                        )}
-
-                        {settings.show_subtitle && (
-                            <p className="text-sm text-slate-600 text-center mb-8">
-                                {settings.subtitle_text}
-                            </p>
-                        )}
-
-                        <form className="space-y-4" onSubmit={handleLogin}>
-
-                            {settings.login_email && (
-                                <>
-                                    {settings.field_name_required && (
-                                        <div>
-                                            <input
-                                                type="text"
-                                                required
-                                                value={name}
-                                                onChange={(e) => setName(e.target.value)}
-                                                className="w-full px-4 py-2 border rounded-lg outline-none"
-                                                placeholder="Nome Completo"
-                                                style={{
-                                                    backgroundColor: settings.input_bg_color || 'transparent',
-                                                    color: settings.input_text_color || '#333333',
-                                                    borderColor: settings.input_border_color || '#cbd5e1',
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-                                    {settings.field_email_required && (
-                                        <div>
-                                            <input
-                                                type="email"
-                                                required
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                className="w-full px-4 py-2 border rounded-lg outline-none"
-                                                placeholder="Seu E-mail"
-                                                style={{
-                                                    backgroundColor: settings.input_bg_color || 'transparent',
-                                                    color: settings.input_text_color || '#333333',
-                                                    borderColor: settings.input_border_color || '#cbd5e1',
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-                                    {settings.field_phone_required && (
-                                        <div>
-                                            <input
-                                                type="tel"
-                                                required
-                                                value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                className="w-full px-4 py-2 border rounded-lg outline-none"
-                                                placeholder="Telefone / WhatsApp"
-                                                style={{
-                                                    backgroundColor: settings.input_bg_color || 'transparent',
-                                                    color: settings.input_text_color || '#333333',
-                                                    borderColor: settings.input_border_color || '#cbd5e1',
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-                                    {settings.field_cpf_required && (
-                                        <div>
-                                            <input
-                                                type="text"
-                                                required
-                                                value={cpf}
-                                                onChange={(e) => setCpf(e.target.value)}
-                                                className="w-full px-4 py-2 border rounded-lg outline-none"
-                                                placeholder="CPF"
-                                                style={{
-                                                    backgroundColor: settings.input_bg_color || 'transparent',
-                                                    color: settings.input_text_color || '#333333',
-                                                    borderColor: settings.input_border_color || '#cbd5e1',
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-
-                                    <button
-                                        type="submit"
-                                        disabled={loading}
-                                        className="w-full py-3 px-4 font-medium shadow transition-all hover:opacity-90 disabled:opacity-70"
-                                        style={{
-                                            backgroundColor: settings.primary_color,
-                                            color: settings.button_text_color || '#ffffff',
-                                            borderRadius: `${settings.border_radius / 2}px`
-                                        }}
-                                    >
-                                        {loading ? "Conectando..." : "Conectar à Internet"}
-                                    </button>
-                                </>
-                            )}
-
-                            {!settings.login_email && (settings.login_facebook || settings.login_google) && (
-                                <div className="space-y-3">
-                                    {settings.login_facebook && (
-                                        <button
-                                            type="button"
-                                            disabled={loading}
-                                            onClick={() => handleLogin()}
-                                            className="w-full py-3 px-4 text-white font-medium shadow transition-all hover:opacity-90"
+                <Card
+                    className="w-full transition-all duration-300 border-0"
+                    style={{
+                        backgroundColor: settings?.card_background_color || '#ffffff',
+                        backgroundImage: settings?.card_background_image ? `url(${settings.card_background_image})` : 'none',
+                        backgroundSize: settings?.card_image_size && settings.card_image_size !== 100 ? `${settings.card_image_size}%` : 'cover',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: `${settings?.card_image_position_x || 50}% ${settings?.card_image_position_y || 50}%`,
+                        borderRadius: `${settings?.border_radius || 16}px`,
+                        opacity: (settings?.opacity || 100) / 100,
+                        boxShadow: settings?.card_shadow ? "0 25px 50px -12px rgba(0, 0, 0, 0.25)" : "none",
+                        maxWidth: `${settings?.card_width || 448}px`,
+                        minHeight: settings?.card_min_height && settings.card_min_height > 0 ? `${settings.card_min_height}px` : 'auto'
+                    }}
+                >
+                    <div style={{ marginTop: settings?.form_margin_top ? `${settings.form_margin_top}px` : '0px' }}>
+                        <CardContent className="space-y-4 text-center mt-6">
+                            {settings.show_logo && (
+                                <div className="mb-6 text-center">
+                                    {settings.logo_url ? (
+                                        <div
+                                            className="mx-auto bg-cover bg-center"
                                             style={{
-                                                backgroundColor: '#1877F2',
-                                                borderRadius: `${settings.border_radius / 2}px`
+                                                width: `${settings.logo_size || 80}px`,
+                                                height: `${settings.logo_size || 80}px`,
+                                                borderRadius: `${settings.border_radius / 1.5}px`,
+                                                backgroundImage: `url(${settings.logo_url})`
+                                            }}
+                                        />
+                                    ) : (
+                                        <div
+                                            className="mx-auto flex items-center justify-center"
+                                            style={{
+                                                width: `${settings.logo_size || 80}px`,
+                                                height: `${settings.logo_size || 80}px`,
+                                                backgroundColor: settings.primary_color,
+                                                borderRadius: `${settings.border_radius / 1.5}px`
                                             }}
                                         >
-                                            Continuar com Facebook
-                                        </button>
-                                    )}
-                                    {settings.login_google && (
-                                        <button
-                                            type="button"
-                                            disabled={loading}
-                                            onClick={() => handleLogin()}
-                                            className="w-full py-3 px-4 text-slate-700 bg-white border border-slate-300 font-medium shadow transition-all hover:bg-slate-50"
-                                            style={{
-                                                borderRadius: `${settings.border_radius / 2}px`
-                                            }}
-                                        >
-                                            Continuar com Google
-                                        </button>
+                                            <Wifi className="text-white" style={{ width: `${(settings.logo_size || 80) / 2}px`, height: `${(settings.logo_size || 80) / 2}px` }} />
+                                        </div>
                                     )}
                                 </div>
                             )}
-                        </form>
 
-                        {error && (
-                            <div className="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg text-center">
-                                {error}
-                            </div>
-                        )}
+                            {settings.show_title && (
+                                <h2 className="text-slate-900 text-center mb-2 text-2xl font-bold">
+                                    {settings.title_text}
+                                </h2>
+                            )}
 
-                        <p
-                            className="text-xs text-slate-500 text-center mt-6"
-                            style={{ fontFamily: settings.font_family }}
-                        >
-                            Ao continuar, você concorda com nossos <span className="underline cursor-pointer">Termos de Uso</span>
-                            {clientMac && <><br /><span className="text-[10px] opacity-50 mt-2 block">MAC: {clientMac}</span></>}
-                        </p>
-                    </CardContent>
-                </div>
-            </Card>
-        </div>
+                            {settings.show_subtitle && (
+                                <p className="text-sm text-slate-600 text-center mb-8">
+                                    {settings.subtitle_text}
+                                </p>
+                            )}
+
+                            <form className="space-y-4" onSubmit={handleLogin}>
+
+                                {settings.login_email && (
+                                    <>
+                                        {settings.field_name_required && (
+                                            <div>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={name}
+                                                    onChange={(e) => setName(e.target.value)}
+                                                    className="w-full px-4 py-2 border rounded-lg outline-none"
+                                                    placeholder="Nome Completo"
+                                                    style={{
+                                                        backgroundColor: settings.input_bg_color || 'transparent',
+                                                        color: settings.input_text_color || '#333333',
+                                                        borderColor: settings.input_border_color || '#cbd5e1',
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                        {settings.field_email_required && (
+                                            <div>
+                                                <input
+                                                    type="email"
+                                                    required
+                                                    value={email}
+                                                    onChange={(e) => setEmail(e.target.value)}
+                                                    className="w-full px-4 py-2 border rounded-lg outline-none"
+                                                    placeholder="Seu E-mail"
+                                                    style={{
+                                                        backgroundColor: settings.input_bg_color || 'transparent',
+                                                        color: settings.input_text_color || '#333333',
+                                                        borderColor: settings.input_border_color || '#cbd5e1',
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                        {settings.field_phone_required && (
+                                            <div>
+                                                <input
+                                                    type="tel"
+                                                    required
+                                                    value={phone}
+                                                    onChange={(e) => setPhone(e.target.value)}
+                                                    className="w-full px-4 py-2 border rounded-lg outline-none"
+                                                    placeholder="Telefone / WhatsApp"
+                                                    style={{
+                                                        backgroundColor: settings.input_bg_color || 'transparent',
+                                                        color: settings.input_text_color || '#333333',
+                                                        borderColor: settings.input_border_color || '#cbd5e1',
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                        {settings.field_cpf_required && (
+                                            <div>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={cpf}
+                                                    onChange={(e) => setCpf(e.target.value)}
+                                                    className="w-full px-4 py-2 border rounded-lg outline-none"
+                                                    placeholder="CPF"
+                                                    style={{
+                                                        backgroundColor: settings.input_bg_color || 'transparent',
+                                                        color: settings.input_text_color || '#333333',
+                                                        borderColor: settings.input_border_color || '#cbd5e1',
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+
+                                        <button
+                                            type="submit"
+                                            disabled={loading}
+                                            className="w-full py-3 px-4 font-medium shadow transition-all hover:opacity-90 disabled:opacity-70"
+                                            style={{
+                                                backgroundColor: settings.primary_color,
+                                                color: settings.button_text_color || '#ffffff',
+                                                borderRadius: `${settings.border_radius / 2}px`
+                                            }}
+                                        >
+                                            {loading ? "Conectando..." : "Conectar à Internet"}
+                                        </button>
+                                    </>
+                                )}
+
+                                {!settings.login_email && (settings.login_facebook || settings.login_google) && (
+                                    <div className="space-y-3">
+                                        {settings.login_facebook && (
+                                            <button
+                                                type="button"
+                                                disabled={loading}
+                                                onClick={() => handleLogin()}
+                                                className="w-full py-3 px-4 text-white font-medium shadow transition-all hover:opacity-90"
+                                                style={{
+                                                    backgroundColor: '#1877F2',
+                                                    borderRadius: `${settings.border_radius / 2}px`
+                                                }}
+                                            >
+                                                Continuar com Facebook
+                                            </button>
+                                        )}
+                                        {settings.login_google && (
+                                            <button
+                                                type="button"
+                                                disabled={loading}
+                                                onClick={() => handleLogin()}
+                                                className="w-full py-3 px-4 text-slate-700 bg-white border border-slate-300 font-medium shadow transition-all hover:bg-slate-50"
+                                                style={{
+                                                    borderRadius: `${settings.border_radius / 2}px`
+                                                }}
+                                            >
+                                                Continuar com Google
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+                            </form>
+
+                            {error && (
+                                <div className="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg text-center">
+                                    {error}
+                                </div>
+                            )}
+
+                            <p
+                                className="text-xs text-slate-500 text-center mt-6"
+                                style={{ fontFamily: settings.font_family }}
+                            >
+                                Ao continuar, você concorda com nossos <span className="underline cursor-pointer">Termos de Uso</span>
+                                {clientMac && <><br /><span className="text-[10px] opacity-50 mt-2 block">MAC: {clientMac}</span></>}
+                            </p>
+                        </CardContent>
+                    </div>
+                </Card>
+            </div>
+        </>
     );
 }
