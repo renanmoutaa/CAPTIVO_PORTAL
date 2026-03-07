@@ -80,9 +80,12 @@ app.post('/api/authorize', async (req, res) => {
         const authorizePayload = {
             cmd: 'authorize-guest',
             mac: clientMac,
-            minutes: 1440, // 24 hours
-            ap_mac: apMac
+            minutes: 1440 // 24 hours
         };
+
+        if (apMac && typeof apMac === 'string' && apMac !== 'null') {
+            authorizePayload.ap_mac = apMac;
+        }
 
         const authorizeHeaders = {
             'Content-Type': 'application/json'
