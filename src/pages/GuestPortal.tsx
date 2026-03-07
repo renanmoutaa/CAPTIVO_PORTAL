@@ -90,45 +90,34 @@ export function GuestPortal() {
                 // Não vamos bloquear a internet do usuário se dar erro no log do DB.
             }
 
-            // 4. Call Vercel Serverless Function to authorize the MAC on Unifi
-            const redirectUrl = originalUrl;
-            // Skip the actual API call if running locally (since Vite doesn't run the Vercel Edge functions)
-            // if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            //     console.log("Ambiente Local Detectado: Simulando sucesso na API Unifi Vercel.");
-            //     setTimeout(() => {
-            //         window.location.href = redirectUrl;
-            //     }, 1000);
-            //     return;
-            // }
+            // 4. Magia Client-Side: Autorizar usuário batendo direto na controladora local pelo celular do visitante
+            // O navegador do visitante está dentro da rede da UDM, então ele tem permissão de mandar a ordem de autorização.
+            console.log("Acionando autorização client-side para a UDM...");
 
-            const response = await fetch('/api/authorize', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authData.session?.access_token || ''}`
-                },
-                body: JSON.stringify({
-                    clientMac,
-                    apMac,
-                    site: site || 'default'
-                })
-            });
+            const form = document.createElement('form');
+            form.method = 'POST';
+            // unifi.local (ou o IP do Gateway) na porta 8880 é sempre interceptado pela UDM na rede de Visitantes
+            const gatewayIp = (import.meta as any).env.VITE_UNIFI_GATEWAY_IP || 'unifi.local';
+            form.action = `http://${gatewayIp}:8880/guest/s/default/login`;
 
-            let data;
-            const textResponse = await response.text();
-            try {
-                data = JSON.parse(textResponse);
-            } catch (e) {
-                console.error("Backend response is not JSON:", textResponse);
-                throw new Error('Falha no Servidor Local (Backend travou ou retornou erro não tratado).');
-            }
+            // by=free é o padrão universal para liberar em redes abertas/promocionais
+            const byInput = document.createElement('input');
+            byInput.type = 'hidden';
+            byInput.name = 'by';
+            byInput.value = 'free'; // Altere para 'password' se habilitar senha no painel da UDM
+            form.appendChild(byInput);
 
-            if (!response.ok) {
-                throw new Error(data?.error || data?.details || 'Falha ao autorizar dispositivo na rede UniFi');
-            }
+            // Redirecionamento Final: a UDM nos joga para a URL que o usuário tentou acessar antes de ser barrado
+            const urlInput = document.createElement('input');
+            urlInput.type = 'hidden';
+            urlInput.name = 'url';
+            urlInput.value = originalUrl || 'https://www.google.com';
+            form.appendChild(urlInput);
 
-            // 5. Success: Redirect user across the internet
-            window.location.href = redirectUrl;
+            document.body.appendChild(form);
+            form.submit();
+
+            // A execução termina aqui. A página vai navegar para o form action da UDM.
 
         } catch (err: any) {
             console.error(err);
