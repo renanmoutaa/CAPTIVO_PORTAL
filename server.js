@@ -76,10 +76,18 @@ app.post('/api/authorize', async (req, res) => {
         const setCookieHeader = loginResponse.headers.get('set-cookie');
         const csrfToken = loginResponse.headers.get('x-csrf-token'); // sometimes required by newer UniFi controllers
 
+        // Format MAC to strict xx:xx:xx:xx:xx:xx for UniFi Regex Validation
+        let formattedMac = clientMac.toLowerCase().replace(/[^a-f0-9]/g, '');
+        if (formattedMac.length === 12) {
+            formattedMac = formattedMac.match(/.{1,2}/g).join(':');
+        } else {
+            return res.status(400).json({ error: 'MAC Address do cliente invalido ou incompleto.' });
+        }
+
         // 2. Authorize Guest Device
         const authorizePayload = {
             cmd: 'authorize-guest',
-            mac: clientMac,
+            mac: formattedMac,
             minutes: 1440 // 24 hours
         };
 
