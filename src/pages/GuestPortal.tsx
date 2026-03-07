@@ -93,13 +93,13 @@ export function GuestPortal() {
             // 4. Call Vercel Serverless Function to authorize the MAC on Unifi
             const redirectUrl = originalUrl;
             // Skip the actual API call if running locally (since Vite doesn't run the Vercel Edge functions)
-            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                console.log("Ambiente Local Detectado: Simulando sucesso na API Unifi Vercel.");
-                setTimeout(() => {
-                    window.location.href = redirectUrl;
-                }, 1000);
-                return;
-            }
+            // if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            //     console.log("Ambiente Local Detectado: Simulando sucesso na API Unifi Vercel.");
+            //     setTimeout(() => {
+            //         window.location.href = redirectUrl;
+            //     }, 1000);
+            //     return;
+            // }
 
             const response = await fetch('/api/authorize', {
                 method: 'POST',
