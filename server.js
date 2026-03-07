@@ -55,6 +55,14 @@ app.post('/api/authorize', async (req, res) => {
 
         console.log(`[AUTH] Attempting to authorize MAC: ${clientMac}`);
 
+        // Format MAC to strict xx:xx:xx:xx:xx:xx for UniFi Regex Validation
+        let formattedMac = clientMac.toLowerCase().replace(/[^a-f0-9]/g, '');
+        if (formattedMac.length === 12) {
+            formattedMac = formattedMac.match(/.{1,2}/g).join(':');
+        } else {
+            return res.status(400).json({ error: 'MAC Address do cliente invalido ou incompleto.' });
+        }
+
         const unifiApiKey = process.env.UNIFI_API_KEY;
 
         if (unifiApiKey) {

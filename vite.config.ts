@@ -54,8 +54,9 @@ export default defineConfig({
     outDir: 'build',
   },
   server: {
-    port: 3000,
-    open: true,
+    host: true, // Listen on all local IPs (0.0.0.0)
+    port: 80,
+    open: false,
     proxy: {
       '/api': {
         target: 'http://localhost:3001',

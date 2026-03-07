@@ -114,10 +114,17 @@ export function GuestPortal() {
                 })
             });
 
-            const data = await response.json();
+            let data;
+            const textResponse = await response.text();
+            try {
+                data = JSON.parse(textResponse);
+            } catch (e) {
+                console.error("Backend response is not JSON:", textResponse);
+                throw new Error('Falha no Servidor Local (Backend travou ou retornou erro não tratado).');
+            }
 
             if (!response.ok) {
-                throw new Error(data.error || 'Falha ao autorizar dispositivo na rede UniFi');
+                throw new Error(data?.error || data?.details || 'Falha ao autorizar dispositivo na rede UniFi');
             }
 
             // 5. Success: Redirect user across the internet
