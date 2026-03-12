@@ -74,38 +74,6 @@ export function ConnectedClients() {
     (client.device && client.device.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const exportToCSV = () => {
-    // 1. Define columns headers
-    const headers = ['Nome', 'Email', 'Telefone', 'CPF', 'Aparelho', 'Local', 'Data de Conexão'];
-
-    // 2. Map data
-    const csvRows = filteredClients.map(client => {
-      return [
-        `"${client.name || ''}"`,
-        `"${client.email || ''}"`,
-        `"${client.phone || ''}"`,
-        `"${client.cpf || ''}"`,
-        `"${client.device || ''}"`,
-        `"${client.location || ''}"`,
-        `"${new Date(client.connected_at).toLocaleString()}"`
-      ].join(',');
-    });
-
-    // 3. Combine headers and rows
-    const csvContent = [headers.join(','), ...csvRows].join('\n');
-
-    // 4. Create Blob and trigger download
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `Leads_Captivo_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -113,7 +81,7 @@ export function ConnectedClients() {
           <h1 className="text-slate-900 mb-2">Clientes Conectados</h1>
           <p className="text-slate-600">{clients.length} clientes registrados</p>
         </div>
-        <Button className="gap-2" onClick={exportToCSV}>
+        <Button className="gap-2">
           <Download className="h-4 w-4" />
           Exportar Dados
         </Button>
@@ -221,10 +189,13 @@ export function ConnectedClients() {
                   <TableRow key={client.id}>
                     <TableCell>
                       <div>
-                        <div className="text-slate-900 font-medium">{client.name}</div>
+                        <div className="text-slate-900">{client.name}</div>
                         <div className="text-sm text-slate-500">{client.email}</div>
-                        {client.phone && <div className="text-xs text-blue-600 mt-1">Tel: {client.phone}</div>}
-                        {client.cpf && <div className="text-xs text-slate-400">CPF: {client.cpf}</div>}
+                        <div className="text-xs text-slate-400">
+                          {client.phone && <span>{client.phone}</span>}
+                          {client.phone && client.cpf && <span className="mx-1">|</span>}
+                          {client.cpf && <span>CPF: {client.cpf}</span>}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>

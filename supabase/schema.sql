@@ -6,11 +6,11 @@ CREATE TABLE IF NOT EXISTS public.connected_clients (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     email TEXT NOT NULL,
-    phone TEXT,
-    cpf TEXT,
     device TEXT,
     ip TEXT,
     mac TEXT UNIQUE NOT NULL,
+    phone TEXT,
+    cpf TEXT,
     status TEXT DEFAULT 'online',
     location TEXT DEFAULT 'default',
     bandwidth_used BIGINT DEFAULT 0, -- em bytes
